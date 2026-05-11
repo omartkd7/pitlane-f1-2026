@@ -1,16 +1,17 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
 import races from '../data/races.js';
 import './Home.css';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const flagEmoji = (code) =>
-  [...code.toUpperCase()].map((c) =>
-    String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65)
-  ).join('');
+  [...code.toUpperCase()]
+    .map((c) => String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65))
+    .join('');
 
-// Parse YYYY-MM-DD into a local Date to avoid UTC timezone shift
 const fmtDate = (iso) => {
   const [y, m, d] = iso.split('-').map(Number);
   return new Date(y, m - 1, d).toLocaleDateString('fr-FR', {
@@ -21,7 +22,6 @@ const fmtDate = (iso) => {
 };
 
 const getCountdown = (dateStart) => {
-  // UTC midnight on the first day of the race weekend
   const target = new Date(`${dateStart}T00:00:00Z`);
   const diff = target - Date.now();
   if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
@@ -39,18 +39,10 @@ const pad = (n) => String(n).padStart(2, '0');
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export const Home = () => {
-  // Refs attached here; GSAP animations will target these in the next step
-  const heroRef = useRef(null);
-  const countdownRef = useRef(null);
-  const cardRef = useRef(null);
+  const pageRef = useRef(null);
 
-  // Stable today string — YYYY-MM-DD lexicographic order matches chronological order
   const today = useMemo(() => new Date().toISOString().split('T')[0], []);
-
-  const nextRace = useMemo(
-    () => races.find((r) => r.dateStart > today),
-    [today]
-  );
+  const nextRace = useMemo(() => races.find((r) => r.dateStart > today), [today]);
 
   const [countdown, setCountdown] = useState(
     () => (nextRace ? getCountdown(nextRace.dateStart) : null)
@@ -64,6 +56,21 @@ export const Home = () => {
     );
     return () => clearInterval(id);
   }, [nextRace]);
+
+  // GSAP entrance — coordinated timeline: eyebrow → flag → name → meta → countdown → card
+  useGSAP(() => {
+    if (!pageRef.current) return;
+    const mm = gsap.matchMedia();
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
+      tl.from('.hero__eyebrow',   { autoAlpha: 0, y: 20, duration: 0.35 })
+        .from('.hero__flag',      { autoAlpha: 0, scale: 0.8, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.15')
+        .from('.hero__race-name', { autoAlpha: 0, y: 25, duration: 0.45 }, '-=0.2')
+        .from('.hero__meta-item', { autoAlpha: 0, y: 15, stagger: 0.06, duration: 0.4 }, '-=0.2')
+        .from('.countdown__unit', { autoAlpha: 0, y: 20, scale: 0.85, stagger: 0.08, duration: 0.45, ease: 'back.out(1.7)' }, '-=0.1')
+        .from('.feature-card',    { autoAlpha: 0, y: 30, duration: 0.5 }, '-=0.1');
+    });
+  }, { scope: pageRef });
 
   if (!nextRace) {
     return (
@@ -79,17 +86,17 @@ export const Home = () => {
   const countdownUnits = [
     { value: countdown.days, label: 'Jours' },
     { value: countdown.hours, label: 'Heures' },
-    { value: countdown.minutes, label: 'Minutes' },
-    { value: countdown.seconds, label: 'Secondes' },
+    { value: countdown.minutes, label: 'Min' },
+    { value: countdown.seconds, label: 'Sec' },
   ];
 
   const totalDistance = (nextRace.laps * nextRace.circuitLengthKm).toFixed(1);
 
   return (
-    <div className="page home">
+    <div className="page home" ref={pageRef}>
 
       {/* ── Hero ── */}
-      <section className="hero" ref={heroRef}>
+      <section className="hero">
         <p className="hero__eyebrow">Prochain Grand Prix</p>
 
         <span className="hero__flag" aria-hidden="true">
@@ -121,8 +128,7 @@ export const Home = () => {
           </div>
         </div>
 
-        {/* Live countdown — aria-live so screen readers announce updates */}
-        <div className="countdown" ref={countdownRef} aria-live="polite">
+        <div className="countdown" aria-live="polite">
           {countdownUnits.map(({ value, label }) => (
             <div key={label} className="countdown__unit">
               <span className="countdown__value">{pad(value)}</span>
@@ -133,7 +139,7 @@ export const Home = () => {
       </section>
 
       {/* ── Feature card ── */}
-      <section className="feature-card" ref={cardRef}>
+      <section className="feature-card">
         <p className="feature-card__eyebrow">Course à la une</p>
         <p className="feature-card__circuit">{nextRace.circuit}</p>
 
@@ -156,15 +162,15 @@ export const Home = () => {
 
         <div className="badges">
           {nextRace.isSprint && (
-            <span className="badge badge--sprint">⚡ Week-end Sprint</span>
+            <span className="badge badge--sprint">Sprint</span>
           )}
           {nextRace.isNewCircuit && (
-            <span className="badge badge--new">🆕 Nouveau circuit</span>
+            <span className="badge badge--new">Nouveau circuit</span>
           )}
         </div>
 
         <Link to={`/calendrier/${nextRace.id}`} className="feature-card__link">
-          Voir tous les détails →
+          Voir les détails →
         </Link>
       </section>
 

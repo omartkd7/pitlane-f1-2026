@@ -1,93 +1,132 @@
 /* ─── Card shell ──────────────────────────────────────────── */
 .race-card {
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
-  border-radius: 10px;
+  background: #1A1A1A;
+  border: 1px solid rgba(154, 154, 150, 0.2);
+  border-left: 3px solid #E5001A;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.75rem;
   height: 100%;
   box-sizing: border-box;
   cursor: pointer;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  min-height: 180px;
+  transition: background 0.12s;
 }
 
 .race-card:hover {
-  border-color: #e10600;
-  box-shadow: 0 0 0 1px #e10600;
+  background: #222;
 }
 
-/* ─── Round label ─────────────────────────────────────────── */
-.race-card__round {
-  font-size: 0.65rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: #e10600;
+/* ─── Ghost round number ──────────────────────────────────── */
+.race-card__ghost {
+  position: absolute;
+  bottom: -12px;
+  right: -4px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 110px;
+  font-weight: 900;
+  color: rgba(255, 255, 255, 0.04);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
 }
 
-/* ─── Flag + name ─────────────────────────────────────────── */
-.race-card__header {
+/* ─── Top: round + badges ─────────────────────────────────── */
+.race-card__top {
   display: flex;
+  justify-content: space-between;
   align-items: flex-start;
+  position: relative;
+  z-index: 1;
+}
+
+.race-card__round {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #E5001A;
+}
+
+.race-card__badges {
+  display: flex;
+  gap: 3px;
+}
+
+.race-card__badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border: 1px solid;
+}
+
+.race-card__badge--sprint {
+  background: #E5001A;
+  border-color: #E5001A;
+  color: #F0EDE8;
+}
+
+.race-card__badge--new {
+  border-color: rgba(154, 154, 150, 0.4);
+  color: #9A9A96;
+}
+
+/* ─── Body: name + circuit ────────────────────────────────── */
+.race-card__body {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+.race-card__name {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 900;
+  line-height: 1.05;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: #F0EDE8;
+  margin: 0;
+}
+
+.race-card__circuit {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  color: #9A9A96;
+  margin: 4px 0 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ─── Footer: flag + dates ────────────────────────────────── */
+.race-card__footer {
+  display: flex;
+  align-items: center;
   gap: 0.75rem;
+  position: relative;
+  z-index: 1;
 }
 
 .race-card__flag {
-  font-size: 2rem;
+  font-size: 1.4rem;
   line-height: 1;
   flex-shrink: 0;
 }
 
-.race-card__name {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #fff;
-  margin: 0;
-  line-height: 1.3;
-}
-
-/* ─── Meta ────────────────────────────────────────────────── */
-.race-card__location {
-  font-size: 0.78rem;
-  color: rgba(255, 255, 255, 0.4);
-}
-
 .race-card__dates {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-/* ─── Badges ──────────────────────────────────────────────── */
-.race-card__badges {
-  display: flex;
-  gap: 0.4rem;
-  flex-wrap: wrap;
-  margin-top: auto;
-  padding-top: 0.25rem;
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.22rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.68rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.03em;
-}
-
-.badge--sprint {
-  background: rgba(255, 165, 0, 0.12);
-  color: #ffa500;
-  border: 1px solid rgba(255, 165, 0, 0.25);
-}
-
-.badge--new {
-  background: rgba(0, 200, 100, 0.12);
-  color: #00c864;
-  border: 1px solid rgba(0, 200, 100, 0.25);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #9A9A96;
 }

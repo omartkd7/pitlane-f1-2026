@@ -1,4 +1,7 @@
 import { useState, useMemo, useRef } from 'react';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import races from '../data/races.js';
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
 import { FilterBar } from '../components/FilterBar.jsx';
@@ -19,7 +22,7 @@ const CONTINENT_LABELS = {
 const TYPES = ['Tous', 'Sprint', 'Standard'];
 const TYPE_LABELS = {
   Tous: 'Tous',
-  Sprint: '⚡ Sprint',
+  Sprint: 'Sprint',
   Standard: 'Standard',
 };
 
@@ -34,7 +37,7 @@ const fmtDate = (iso) => {
   const [y, m, d] = iso.split('-').map(Number);
   return new Date(y, m - 1, d).toLocaleDateString('fr-FR', {
     day: 'numeric',
-    month: 'long',
+    month: 'short',
     year: 'numeric',
   });
 };
@@ -42,7 +45,6 @@ const fmtDate = (iso) => {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export const MySeason = () => {
-  // logRef: ScrollTrigger reveal animation target
   const logRef = useRef(null);
 
   // useLocalStorage reads once on mount via lazy initializer — no polling
@@ -51,7 +53,6 @@ export const MySeason = () => {
   const [selectedContinent, setSelectedContinent] = useState('Tous');
   const [selectedType, setSelectedType] = useState('Tous');
 
-  // Derive sorted race objects from watched ids — stable across filter changes
   const watchedRaces = useMemo(
     () =>
       watched
@@ -61,7 +62,6 @@ export const MySeason = () => {
     [watched]
   );
 
-  // Apply continent + type filters — stats derive from this, not watchedRaces
   const filteredWatched = useMemo(
     () =>
       watchedRaces.filter((race) => {
@@ -75,6 +75,30 @@ export const MySeason = () => {
       }),
     [watchedRaces, selectedContinent, selectedType]
   );
+
+  // GSAP: per-entry ScrollTrigger slide-in — re-runs on filter change, previous triggers auto-cleaned
+  useGSAP(() => {
+    if (!logRef.current) return;
+    const entries = Array.from(logRef.current.children);
+    if (!entries.length) return;
+    const mm = gsap.matchMedia();
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      entries.forEach((entry) => {
+        gsap.from(entry, {
+          autoAlpha: 0,
+          x: -20,
+          duration: 0.4,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: entry,
+            start: 'top 90%',
+            toggleActions: 'play none none none',
+          },
+        });
+      });
+      ScrollTrigger.refresh();
+    });
+  }, { dependencies: [filteredWatched] });
 
   const count = filteredWatched.length;
   const sprintCount = filteredWatched.filter((r) => r.isSprint).length;
@@ -115,7 +139,9 @@ export const MySeason = () => {
         <ol className="season-log" ref={logRef}>
           {filteredWatched.map((race) => (
             <li key={race.id} className="season-entry">
-              <span className="season-entry__round">R{race.round}</span>
+              <span className="season-entry__round">
+                {String(race.round).padStart(2, '0')}
+              </span>
               <span className="season-entry__flag" aria-hidden="true">
                 {flagEmoji(race.countryCode)}
               </span>
@@ -130,7 +156,7 @@ export const MySeason = () => {
                   {CONTINENT_LABELS[race.continent]}
                 </span>
                 {race.isSprint && (
-                  <span className="season-badge season-badge--sprint">⚡ Sprint</span>
+                  <span className="season-badge season-badge--sprint">Sprint</span>
                 )}
               </div>
             </li>

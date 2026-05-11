@@ -1,5 +1,8 @@
 import { useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useGSAP } from '@gsap/react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import races from '../data/races.js';
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
 import './RaceDetail.css';
@@ -7,9 +10,9 @@ import './RaceDetail.css';
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 const flagEmoji = (code) =>
-  [...code.toUpperCase()].map((c) =>
-    String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65)
-  ).join('');
+  [...code.toUpperCase()]
+    .map((c) => String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65))
+    .join('');
 
 const formatDate = (iso) => {
   const [y, m, d] = iso.split('-').map(Number);
@@ -23,18 +26,52 @@ const formatDate = (iso) => {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export const RaceDetails = () => {
-  // pageRef attached to root element — GSAP entrance animation targets this
   const pageRef = useRef(null);
 
   const { raceId } = useParams();
   const navigate = useNavigate();
 
-  // useLocalStorage reads from localStorage synchronously on first render
-  // (lazy initializer), so state is correct before the first paint — no flash
   const [favorites, setFavorites] = useLocalStorage('pitlane_favorites', []);
   const [watched, setWatched] = useLocalStorage('pitlane_watched', []);
 
   const race = races.find((r) => r.id === raceId);
+
+  // GSAP: immediate entrance for above-fold elements, ScrollTrigger for below-fold
+  useGSAP(() => {
+    if (!pageRef.current) return;
+    const mm = gsap.matchMedia();
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      gsap.from(['.back-btn', '.race-header', '.race-badges', '.race-actions'], {
+        autoAlpha: 0,
+        y: 25,
+        stagger: 0.07,
+        duration: 0.5,
+        ease: 'power2.out',
+      });
+      gsap.from('.race-info-grid', {
+        autoAlpha: 0,
+        y: 20,
+        duration: 0.5,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.race-info-grid',
+          start: 'top 90%',
+          toggleActions: 'play none none none',
+        },
+      });
+      gsap.from('.race-description', {
+        autoAlpha: 0,
+        y: 20,
+        duration: 0.5,
+        ease: 'power2.out',
+        scrollTrigger: {
+          trigger: '.race-description',
+          start: 'top 90%',
+          toggleActions: 'play none none none',
+        },
+      });
+    });
+  }, { scope: pageRef });
 
   if (!race) {
     return (
@@ -95,10 +132,10 @@ export const RaceDetails = () => {
       {(race.isSprint || race.isNewCircuit) && (
         <div className="race-badges">
           {race.isSprint && (
-            <span className="badge badge--sprint">⚡ Week-end Sprint</span>
+            <span className="badge badge--sprint">Sprint</span>
           )}
           {race.isNewCircuit && (
-            <span className="badge badge--new">🆕 Nouveau circuit</span>
+            <span className="badge badge--new">Nouveau circuit</span>
           )}
         </div>
       )}
@@ -110,7 +147,7 @@ export const RaceDetails = () => {
           onClick={toggleFavorite}
           aria-pressed={isFavorite}
         >
-          {isFavorite ? '⭐ Dans les favoris' : '☆ Ajouter aux favoris'}
+          {isFavorite ? '★ Dans les favoris' : '☆ Ajouter aux favoris'}
         </button>
 
         <button
@@ -118,7 +155,7 @@ export const RaceDetails = () => {
           onClick={toggleWatched}
           aria-pressed={isWatched}
         >
-          {isWatched ? '✓ Regardé' : '○ J\'ai regardé ça'}
+          {isWatched ? '✓ Regardé' : "○ J'ai regardé ça"}
         </button>
       </div>
 
@@ -140,10 +177,10 @@ export const RaceDetails = () => {
         </div>
         <div className="race-info-item">
           <span className="label">Tours</span>
-          <span className="value">{race.laps} tours</span>
+          <span className="value">{race.laps}</span>
         </div>
         <div className="race-info-item">
-          <span className="label">Longueur du circuit</span>
+          <span className="label">Longueur</span>
           <span className="value">{race.circuitLengthKm} km</span>
         </div>
         <div className="race-info-item">
@@ -152,7 +189,7 @@ export const RaceDetails = () => {
         </div>
       </section>
 
-      {/* ── Editorial description ── */}
+      {/* ── Description ── */}
       <section className="race-description">
         <p>{race.description}</p>
       </section>

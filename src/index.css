@@ -1,95 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,900;1,900&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+
+/* ─── Design Tokens ───────────────────────────────────────── */
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  --red:    #E5001A;
+  --bg:     #0A0A0A;
+  --surface:#1A1A1A;
+  --text:   #F0EDE8;
+  --silver: #9A9A96;
+  --border: rgba(154, 154, 150, 0.2);
+}
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ─── Global reset ────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  border-radius: 0 !important;
 }
 
 body {
   margin: 0;
-  display: flex;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
   width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+/* ─── App layout ──────────────────────────────────────────── */
 .app-container {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  min-height: 100vh;
 }
 
+.content {
+  flex: 1;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 3rem 3rem;
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 1.5rem 1rem;
+  }
+}
+
+/* ─── Navbar ──────────────────────────────────────────────── */
 .navbar {
+  width: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
-  background-color: #1a1a1a;
-  border-bottom: 2px solid #e10600;
+  padding: 0 3rem;
+  height: 64px;
+  background-color: var(--bg);
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  z-index: 1000;
-  width: 100%;
-  box-sizing: border-box;
+  z-index: 50;
 }
 
 .nav-brand {
-  font-size: 1.5rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 2rem;
   font-weight: 900;
-  color: #e10600;
-  letter-spacing: 1px;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  text-decoration: none;
 }
 
 .nav-links {
   display: flex;
-  gap: 2rem;
+  align-items: center;
+  gap: 2.5rem;
   list-style: none;
   padding: 0;
   margin: 0;
+  height: 100%;
 }
 
-.nav-links a {
+.nav-links li {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.nav-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--silver);
   text-decoration: none;
-  color: #fff;
-  font-weight: 600;
-  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  border-bottom: 2px solid transparent;
+  transition: color 0.1s;
 }
 
-.nav-links a:hover {
-  color: #e10600;
+.nav-link:hover {
+  color: var(--text);
 }
 
-.nav-links a.active,
 .nav-link--active {
-  color: #e10600;
-  border-bottom: 2px solid #e10600;
+  color: var(--red);
+  border-bottom: 2px solid var(--red);
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
+/* ─── Page wrapper ────────────────────────────────────────── */
+.page {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* ─── 404 ─────────────────────────────────────────────────── */
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 60vh;
+  gap: 1rem;
+}
+
+.not-found h1 {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(6rem, 20vw, 12rem);
+  font-weight: 900;
+  line-height: 0.9;
+  color: var(--red);
+  opacity: 0.8;
+}
+
+.not-found p {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--silver);
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 1rem;
+  }
+  .nav-links {
+    gap: 1.25rem;
+  }
 }
