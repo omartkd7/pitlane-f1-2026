@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="fr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PIT·LANE | CALENDRIER</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@900&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #0A0A0A;
+            color: #ffdad6;
+            -webkit-font-smoothing: antialiased;
+        }
+        .brushed-silver-border {
+            border: 1px solid rgba(199, 199, 194, 0.2);
+        }
+        .ghost-number {
+            position: absolute;
+            bottom: -10px;
+            right: 0;
+            font-size: 120px;
+            color: rgba(255, 218, 214, 0.04);
+            pointer-events: none;
+            line-height: 1;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-primary": "#690006",
+                      "error-container": "#93000a",
+                      "on-background": "#ffdad6",
+                      "tertiary-fixed": "#d3e4ff",
+                      "secondary": "#c7c7c2",
+                      "on-secondary": "#30312e",
+                      "surface-container-low": "#2a1614",
+                      "secondary-container": "#484946",
+                      "primary-container": "#e5001a",
+                      "inverse-on-surface": "#412b28",
+                      "primary": "#ffb4ab",
+                      "on-surface": "#ffdad6",
+                      "surface-dim": "#200e0d",
+                      "surface-container": "#2e1a18",
+                      "on-primary-fixed": "#410002",
+                      "on-error-container": "#ffdad6",
+                      "tertiary-fixed-dim": "#a2c9ff",
+                      "inverse-primary": "#c00014",
+                      "on-primary-container": "#fff6f5",
+                      "secondary-fixed": "#e3e2de",
+                      "on-tertiary": "#00315b",
+                      "on-surface-variant": "#e9bcb7",
+                      "surface-bright": "#4b3331",
+                      "on-secondary-fixed": "#1b1c19",
+                      "primary-fixed-dim": "#ffb4ab",
+                      "on-error": "#690005",
+                      "inverse-surface": "#ffdad6",
+                      "surface-tint": "#ffb4ab",
+                      "surface-container-lowest": "#1a0908",
+                      "surface-container-high": "#3a2522",
+                      "outline-variant": "#5e3f3b",
+                      "surface": "#200e0d",
+                      "surface-container-highest": "#462f2d",
+                      "surface-variant": "#462f2d",
+                      "on-secondary-container": "#b9b8b4",
+                      "on-primary-fixed-variant": "#93000c",
+                      "outline": "#af8783",
+                      "on-tertiary-fixed-variant": "#004880",
+                      "primary-fixed": "#ffdad6",
+                      "error": "#ffb4ab",
+                      "tertiary": "#a2c9ff",
+                      "secondary-fixed-dim": "#c7c7c2",
+                      "on-secondary-fixed-variant": "#464744",
+                      "on-tertiary-container": "#f6f8ff",
+                      "tertiary-container": "#0074c9",
+                      "on-tertiary-fixed": "#001c38",
+                      "background": "#200e0d"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-md": "24px",
+                      "margin-mobile": "16px",
+                      "stack-sm": "8px",
+                      "stack-lg": "48px",
+                      "unit": "4px",
+                      "margin-desktop": "48px",
+                      "gutter": "1px"
+              },
+              "fontFamily": {
+                      "label-sm": ["JetBrains Mono"],
+                      "display-md": ["Barlow Condensed"],
+                      "display-lg": ["Barlow Condensed"],
+                      "body-md": ["JetBrains Mono"],
+                      "label-caps": ["JetBrains Mono"],
+                      "headline-lg": ["Barlow Condensed"],
+                      "data-lg": ["JetBrains Mono"],
+                      "headline-sm": ["Barlow Condensed"]
+              },
+              "fontSize": {
+                      "label-sm": ["10px", {"lineHeight": "1.0", "fontWeight": "400"}],
+                      "display-md": ["48px", {"lineHeight": "1.0", "letterSpacing": "-0.01em", "fontWeight": "900"}],
+                      "display-lg": ["72px", {"lineHeight": "1.0", "letterSpacing": "-0.02em", "fontWeight": "900"}],
+                      "body-md": ["14px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                      "label-caps": ["12px", {"lineHeight": "1.0", "letterSpacing": "0.1em", "fontWeight": "700"}],
+                      "headline-lg": ["32px", {"lineHeight": "1.1", "fontWeight": "900"}],
+                      "data-lg": ["20px", {"lineHeight": "1.2", "fontWeight": "700"}],
+                      "headline-sm": ["24px", {"lineHeight": "1.1", "fontWeight": "900"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="flex flex-col min-h-screen">
+<!-- Top Navigation -->
+<nav class="bg-background border-b border-outline-variant flex justify-between items-center w-full px-margin-desktop h-20 sticky top-0 z-50">
+<div class="font-display-md text-display-md text-primary tracking-tighter">PIT·LANE</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-on-surface-variant font-label-caps hover:bg-on-primary-container hover:text-on-primary transition-colors duration-150 py-2" href="#">PADDOCK</a>
+<a class="text-primary border-b-2 border-primary font-label-caps hover:bg-on-primary-container hover:text-on-primary transition-colors duration-150 py-2" href="#">CALENDRIER</a>
+<a class="text-on-surface-variant font-label-caps hover:bg-on-primary-container hover:text-on-primary transition-colors duration-150 py-2" href="#">MON GARAGE</a>
+<a class="text-on-surface-variant font-label-caps hover:bg-on-primary-container hover:text-on-primary transition-colors duration-150 py-2" href="#">MA SAISON</a>
+</div>
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-primary cursor-pointer hover:scale-95 transition-transform">notifications</span>
+<span class="material-symbols-outlined text-primary cursor-pointer hover:scale-95 transition-transform">settings</span>
+</div>
+</nav>
+<main class="flex-grow w-full max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop py-10">
+<!-- Filter Sections -->
+<header class="mb-12 space-y-4">
+<!-- Filter Row 1 -->
+<div class="flex flex-wrap gap-2">
+<button class="bg-primary-container text-on-primary-container px-6 py-2 font-label-caps rounded-none border border-primary-container">TOUS</button>
+<button class="brushed-silver-border text-secondary px-6 py-2 font-label-caps rounded-none hover:bg-surface-container-highest transition-colors">EUROPE</button>
+<button class="brushed-silver-border text-secondary px-6 py-2 font-label-caps rounded-none hover:bg-surface-container-highest transition-colors">AMÉRIQUES</button>
+<button class="brushed-silver-border text-secondary px-6 py-2 font-label-caps rounded-none hover:bg-surface-container-highest transition-colors">ASIE-PACIFIQUE</button>
+<button class="brushed-silver-border text-secondary px-6 py-2 font-label-caps rounded-none hover:bg-surface-container-highest transition-colors">MOYEN-ORIENT</button>
+</div>
+<!-- Filter Row 2 -->
+<div class="flex flex-wrap gap-2">
+<button class="bg-primary-container text-on-primary-container px-6 py-2 font-label-caps rounded-none border border-primary-container">TOUS</button>
+<button class="brushed-silver-border text-secondary px-6 py-2 font-label-caps rounded-none hover:bg-surface-container-highest transition-colors">SPRINT</button>
+<button class="brushed-silver-border text-secondary px-6 py-2 font-label-caps rounded-none hover:bg-surface-container-highest transition-colors">STANDARD</button>
+</div>
+</header>
+<!-- Race Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter bg-outline-variant">
+<!-- Card 01 -->
+<div class="relative bg-[#1A1A1A] p-6 border-l-[3px] border-primary-container brushed-silver-border overflow-hidden h-64 flex flex-col justify-between group cursor-pointer transition-colors hover:bg-surface-container-high">
+<div class="ghost-number font-display-lg">01</div>
+<div class="flex justify-between items-start z-10">
+<span class="text-primary-container font-label-caps font-bold">ROUND 01</span>
+<span class="bg-primary-container text-on-primary-container px-2 py-0.5 font-label-sm font-bold">SPRINT</span>
+</div>
+<div class="z-10">
+<h2 class="font-headline-lg text-white uppercase tracking-tight">GRAND PRIX DE BAHREÏN</h2>
+<p class="font-body-md text-secondary mt-1">Sakhir International Circuit</p>
+</div>
+<div class="flex justify-between items-end z-10">
+<div class="flex items-center gap-3">
+<span class="text-2xl">🇧🇭</span>
+<span class="font-label-caps text-secondary">02 - 04 MARS</span>
+</div>
+<span class="material-symbols-outlined text-secondary hover:text-primary transition-colors" data-weight="fill">bookmark</span>
+</div>
+</div>
+<!-- Card 02 -->
+<div class="relative bg-[#1A1A1A] p-6 border-l-[3px] border-primary-container brushed-silver-border overflow-hidden h-64 flex flex-col justify-between group cursor-pointer transition-colors hover:bg-surface-container-high">
+<div class="ghost-number font-display-lg">02</div>
+<div class="flex justify-between items-start z-10">
+<span class="text-primary-container font-label-caps font-bold">ROUND 02</span>
+<span class="brushed-silver-border text-secondary px-2 py-0.5 font-label-sm font-bold">NEW</span>
+</div>
+<div class="z-10">
+<h2 class="font-headline-lg text-white uppercase tracking-tight">GRAND PRIX D'ARABIE SAOUDITE</h2>
+<p class="font-body-md text-secondary mt-1">Jeddah Corniche Circuit</p>
+</div>
+<div class="flex justify-between items-end z-10">
+<div class="flex items-center gap-3">
+<span class="text-2xl">🇸🇦</span>
+<span class="font-label-caps text-secondary">07 - 09 MARS</span>
+</div>
+<span class="material-symbols-outlined text-secondary hover:text-primary transition-colors">bookmark</span>
+</div>
+</div>
+<!-- Card 03 -->
+<div class="relative bg-[#1A1A1A] p-6 border-l-[3px] border-primary-container brushed-silver-border overflow-hidden h-64 flex flex-col justify-between group cursor-pointer transition-colors hover:bg-surface-container-high">
+<div class="ghost-number font-display-lg">03</div>
+<div class="flex justify-between items-start z-10">
+<span class="text-primary-container font-label-caps font-bold">ROUND 03</span>
+</div>
+<div class="z-10">
+<h2 class="font-headline-lg text-white uppercase tracking-tight">GRAND PRIX D'AUSTRALIE</h2>
+<p class="font-body-md text-secondary mt-1">Albert Park Circuit</p>
+</div>
+<div class="flex justify-between items-end z-10">
+<div class="flex items-center gap-3">
+<span class="text-2xl">🇦🇺</span>
+<span class="font-label-caps text-secondary">22 - 24 MARS</span>
+</div>
+<span class="material-symbols-outlined text-secondary hover:text-primary transition-colors">bookmark</span>
+</div>
+</div>
+<!-- Card 04 -->
+<div class="relative bg-[#1A1A1A] p-6 border-l-[3px] border-primary-container brushed-silver-border overflow-hidden h-64 flex flex-col justify-between group cursor-pointer transition-colors hover:bg-surface-container-high">
+<div class="ghost-number font-display-lg">04</div>
+<div class="flex justify-between items-start z-10">
+<span class="text-primary-container font-label-caps font-bold">ROUND 04</span>
+<span class="bg-primary-container text-on-primary-container px-2 py-0.5 font-label-sm font-bold">SPRINT</span>
+</div>
+<div class="z-10">
+<h2 class="font-headline-lg text-white uppercase tracking-tight">GRAND PRIX DU JAPON</h2>
+<p class="font-body-md text-secondary mt-1">Suzuka International Racing Course</p>
+</div>
+<div class="flex justify-between items-end z-10">
+<div class="flex items-center gap-3">
+<span class="text-2xl">🇯🇵</span>
+<span class="font-label-caps text-secondary">05 - 07 AVRIL</span>
+</div>
+<span class="material-symbols-outlined text-secondary hover:text-primary transition-colors">bookmark</span>
+</div>
+</div>
+<!-- Card 05 -->
+<div class="relative bg-[#1A1A1A] p-6 border-l-[3px] border-primary-container brushed-silver-border overflow-hidden h-64 flex flex-col justify-between group cursor-pointer transition-colors hover:bg-surface-container-high">
+<div class="ghost-number font-display-lg">05</div>
+<div class="flex justify-between items-start z-10">
+<span class="text-primary-container font-label-caps font-bold">ROUND 05</span>
+</div>
+<div class="z-10">
+<h2 class="font-headline-lg text-white uppercase tracking-tight">GRAND PRIX DE CHINE</h2>
+<p class="font-body-md text-secondary mt-1">Shanghai International Circuit</p>
+</div>
+<div class="flex justify-between items-end z-10">
+<div class="flex items-center gap-3">
+<span class="text-2xl">🇨🇳</span>
+<span class="font-label-caps text-secondary">19 - 21 AVRIL</span>
+</div>
+<span class="material-symbols-outlined text-secondary hover:text-primary transition-colors" data-weight="fill">bookmark</span>
+</div>
+</div>
+<!-- Card 06 -->
+<div class="relative bg-[#1A1A1A] p-6 border-l-[3px] border-primary-container brushed-silver-border overflow-hidden h-64 flex flex-col justify-between group cursor-pointer transition-colors hover:bg-surface-container-high">
+<div class="ghost-number font-display-lg">06</div>
+<div class="flex justify-between items-start z-10">
+<span class="text-primary-container font-label-caps font-bold">ROUND 06</span>
+</div>
+<div class="z-10">
+<h2 class="font-headline-lg text-white uppercase tracking-tight">GRAND PRIX DE MIAMI</h2>
+<p class="font-body-md text-secondary mt-1">Miami International Autodrome</p>
+</div>
+<div class="flex justify-between items-end z-10">
+<div class="flex items-center gap-3">
+<span class="text-2xl">🇺🇸</span>
+<span class="font-label-caps text-secondary">03 - 05 MAI</span>
+</div>
+<span class="material-symbols-outlined text-secondary hover:text-primary transition-colors">bookmark</span>
+</div>
+</div>
+<!-- Card 07 -->
+<div class="relative bg-[#1A1A1A] p-6 border-l-[3px] border-primary-container brushed-silver-border overflow-hidden h-64 flex flex-col justify-between group cursor-pointer transition-colors hover:bg-surface-container-high">
+<div class="ghost-number font-display-lg">07</div>
+<div class="flex justify-between items-start z-10">
+<span class="text-primary-container font-label-caps font-bold">ROUND 07</span>
+</div>
+<div class="z-10">
+<h2 class="font-headline-lg text-white uppercase tracking-tight">GRAND PRIX D'EMILIE-ROMAGNE</h2>
+<p class="font-body-md text-secondary mt-1">Autodromo Enzo e Dino Ferrari</p>
+</div>
+<div class="flex justify-between items-end z-10">
+<div class="flex items-center gap-3">
+<span class="text-2xl">🇮🇹</span>
+<span class="font-label-caps text-secondary">17 - 19 MAI</span>
+</div>
+<span class="material-symbols-outlined text-secondary hover:text-primary transition-colors">bookmark</span>
+</div>
+</div>
+<!-- Card 08 -->
+<div class="relative bg-[#1A1A1A] p-6 border-l-[3px] border-primary-container brushed-silver-border overflow-hidden h-64 flex flex-col justify-between group cursor-pointer transition-colors hover:bg-surface-container-high">
+<div class="ghost-number font-display-lg">08</div>
+<div class="flex justify-between items-start z-10">
+<span class="text-primary-container font-label-caps font-bold">ROUND 08</span>
+</div>
+<div class="z-10">
+<h2 class="font-headline-lg text-white uppercase tracking-tight">GRAND PRIX DE MONACO</h2>
+<p class="font-body-md text-secondary mt-1">Circuit de Monaco</p>
+</div>
+<div class="flex justify-between items-end z-10">
+<div class="flex items-center gap-3">
+<span class="text-2xl">🇲🇨</span>
+<span class="font-label-caps text-secondary">24 - 26 MAI</span>
+</div>
+<span class="material-symbols-outlined text-secondary hover:text-primary transition-colors">bookmark</span>
+</div>
+</div>
+<!-- Card 09 -->
+<div class="relative bg-[#1A1A1A] p-6 border-l-[3px] border-primary-container brushed-silver-border overflow-hidden h-64 flex flex-col justify-between group cursor-pointer transition-colors hover:bg-surface-container-high">
+<div class="ghost-number font-display-lg">09</div>
+<div class="flex justify-between items-start z-10">
+<span class="text-primary-container font-label-caps font-bold">ROUND 09</span>
+<span class="bg-primary-container text-on-primary-container px-2 py-0.5 font-label-sm font-bold">SPRINT</span>
+</div>
+<div class="z-10">
+<h2 class="font-headline-lg text-white uppercase tracking-tight">GRAND PRIX DU CANADA</h2>
+<p class="font-body-md text-secondary mt-1">Circuit Gilles-Villeneuve</p>
+</div>
+<div class="flex justify-between items-end z-10">
+<div class="flex items-center gap-3">
+<span class="text-2xl">🇨🇦</span>
+<span class="font-label-caps text-secondary">07 - 09 JUIN</span>
+</div>
+<span class="material-symbols-outlined text-secondary hover:text-primary transition-colors">bookmark</span>
+</div>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-stretch h-16 bg-background border-t border-outline-variant">
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 w-full h-full hover:bg-surface-container-highest" href="#">
+<span class="material-symbols-outlined">speed</span>
+<span class="font-label-sm text-label-sm">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-primary text-on-primary p-2 w-full h-full invert" href="#">
+<span class="material-symbols-outlined">flag</span>
+<span class="font-label-sm text-label-sm">Race</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 w-full h-full hover:bg-surface-container-highest" href="#">
+<span class="material-symbols-outlined">engineering</span>
+<span class="font-label-sm text-label-sm">Team</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 w-full h-full hover:bg-surface-container-highest" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-label-sm text-label-sm">History</span>
+</a>
+</nav>
+<footer class="mt-20 border-t border-outline-variant px-margin-desktop py-8 bg-[#0A0A0A]">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+<div>
+<div class="font-display-md text-display-md text-primary tracking-tighter mb-2">PIT·LANE</div>
+<p class="font-body-md text-secondary max-w-sm">Le portail premium de la Formule 1 2026. Données en temps réel, télémétrie avancée et analyses exclusives.</p>
+</div>
+<div class="grid grid-cols-2 gap-12">
+<div>
+<h4 class="font-label-caps text-primary mb-4">LÉGAL</h4>
+<ul class="space-y-2 font-body-md text-secondary">
+<li class="hover:text-primary cursor-pointer">Confidentialité</li>
+<li class="hover:text-primary cursor-pointer">Conditions</li>
+<li class="hover:text-primary cursor-pointer">Cookies</li>
+</ul>
+</div>
+<div>
+<h4 class="font-label-caps text-primary mb-4">SOCIAL</h4>
+<ul class="space-y-2 font-body-md text-secondary">
+<li class="hover:text-primary cursor-pointer">Twitter / X</li>
+<li class="hover:text-primary cursor-pointer">Instagram</li>
+<li class="hover:text-primary cursor-pointer">YouTube</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="mt-12 pt-8 border-t border-outline-variant flex justify-between font-label-sm text-secondary">
+<span>© 2026 PIT·LANE MEDIA GROUP</span>
+<span>DATA BY FORMULA ONE TELEMETRY SERVICES</span>
+</div>
+</footer>
+</body></html>
