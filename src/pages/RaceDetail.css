@@ -1,0 +1,183 @@
+/* ─── Page layout ─────────────────────────────────────────── */
+.race-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  text-align: left;
+  max-width: 760px;
+}
+
+/* ─── Back button ─────────────────────────────────────────── */
+.back-btn {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s;
+}
+
+.back-btn:hover {
+  color: #fff;
+}
+
+/* ─── Not-found state ─────────────────────────────────────── */
+.race-detail--not-found {
+  padding-top: 2rem;
+}
+
+.race-detail--not-found h1 {
+  font-size: 1.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.race-detail--not-found code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+/* ─── Header ──────────────────────────────────────────────── */
+.race-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.race-flag {
+  font-size: 3.5rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.race-header__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.race-round {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #e10600;
+  margin: 0;
+}
+
+.race-name {
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-weight: 900;
+  color: #fff;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.race-location {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0;
+}
+
+/* ─── Badges ──────────────────────────────────────────────── */
+.race-badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Badge base + variants live in RaceCard.css (global CSS) */
+
+/* ─── Action buttons ──────────────────────────────────────── */
+.race-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+
+.action-btn:hover {
+  color: #fff;
+  border-color: #555;
+}
+
+.action-btn--favorite.action-btn--active {
+  background: rgba(255, 198, 0, 0.12);
+  border-color: rgba(255, 198, 0, 0.4);
+  color: #ffc600;
+}
+
+.action-btn--watched.action-btn--active {
+  background: rgba(0, 200, 100, 0.12);
+  border-color: rgba(0, 200, 100, 0.35);
+  color: #00c864;
+}
+
+/* ─── Info grid ───────────────────────────────────────────── */
+.race-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1px;
+  background: #2a2a2a;
+  border: 1px solid #2a2a2a;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.race-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 1.1rem 1.25rem;
+  background: #1a1a1a;
+}
+
+.race-info-item .label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.35);
+}
+
+.race-info-item .value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* ─── Description ─────────────────────────────────────────── */
+.race-description {
+  padding: 1.5rem;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-left: 3px solid #e10600;
+  border-radius: 0 8px 8px 0;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.race-description p {
+  margin: 0;
+}

@@ -1,0 +1,43 @@
+/* ─── Page layout ─────────────────────────────────────────── */
+.my-garage {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  text-align: left;
+}
+
+.my-garage__title {
+  margin: 0;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 900;
+  color: #fff;
+}
+
+.my-garage__subtitle {
+  margin: -1.25rem 0 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* ─── Grid ────────────────────────────────────────────────── */
+.garage-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+/* ─── Empty state ─────────────────────────────────────────── */
+.garage-empty {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: #1a1a1a;
+  border: 1px dashed #333;
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+
+.garage-empty p {
+  margin: 0;
+}
