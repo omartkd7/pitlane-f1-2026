@@ -7,22 +7,25 @@ import { RaceDetails } from './pages/RaceDetails';
 import { MyGarage } from './pages/MyGarage';
 import { MySeason } from './pages/MySeason';
 
-export const App = () => {
-  return (
-    <div className="app-container">
-      {/* Persistent navigation component */}
-      <Navbar />
+const NotFound = () => (
+  <div className="page not-found">
+    <h1>404</h1>
+    <p>Page non trouvée.</p>
+  </div>
+);
 
-      {/* Route definitions */}
-      <main className="content">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/calendrier" element={<Calendar />} />
-          <Route path="/calendrier/:raceId" element={<RaceDetails />} />
-          <Route path="/mongarage" element={<MyGarage />} />
-          <Route path="/masaison" element={<MySeason />} />
-        </Routes>
-      </main>
-    </div>
-  );
-};
+export const App = () => (
+  <div className="app-container">
+    <Navbar />
+    <main className="content">
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/calendrier" element={<Calendar />} />
+        <Route path="/calendrier/:raceId" element={<RaceDetails />} />
+        <Route path="/mongarage" element={<MyGarage />} />
+        <Route path="/masaison" element={<MySeason />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </main>
+  </div>
+);

@@ -10,10 +10,11 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
+    "gsap": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "latest",
-    "gsap": "latest"
+    "react-router-dom": "latest"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",
