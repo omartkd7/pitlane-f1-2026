@@ -6,7 +6,7 @@ import drivers from '../data/drivers.js';
 import teams from '../data/teams.js';
 import './Drivers.css';
 
-gsap.registerPlugin(ScrollTrigger);
+// ScrollTrigger already registered in main.jsx
 
 const flagEmoji = (code) =>
   [...code.toUpperCase()]
@@ -45,9 +45,9 @@ export const Drivers = () => {
             },
           });
         });
-        return () => mm.revert();
       }
     );
+    return () => mm.revert();
   }, { scope: pageRef });
 
   useEffect(() => { ScrollTrigger.refresh(); }, []);

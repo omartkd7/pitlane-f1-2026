@@ -6,7 +6,7 @@ import teams from '../data/teams.js';
 import drivers from '../data/drivers.js';
 import './Teams.css';
 
-gsap.registerPlugin(ScrollTrigger);
+// ScrollTrigger already registered in main.jsx
 
 export const Teams = () => {
   const pageRef = useRef(null);
@@ -54,10 +54,9 @@ export const Teams = () => {
             scrollTrigger: { trigger: bar, start: 'top 93%', toggleActions: 'play none none none' },
           });
         });
-
-        return () => mm.revert();
       }
     );
+    return () => mm.revert();
   }, { scope: pageRef });
 
   useEffect(() => { ScrollTrigger.refresh(); }, []);
@@ -135,7 +134,6 @@ export const Teams = () => {
         {teams.map((team, i) => {
           const teamDrivers = drivers.filter((d) => d.teamId === team.id);
           const gap = i === 0 ? null : leader.points - team.points;
-          const pct = Math.round((team.points / maxPoints) * 100);
           return (
             <article
               key={team.id}

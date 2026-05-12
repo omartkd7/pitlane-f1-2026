@@ -2,13 +2,12 @@ import { useMemo, useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import races from '../data/races.js';
 import drivers from '../data/drivers.js';
 import teams from '../data/teams.js';
 import './Home.css';
 
-gsap.registerPlugin(ScrollTrigger);
+// ScrollTrigger already registered in main.jsx
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -133,9 +132,9 @@ export const Home = () => {
             start: 'top 88%',
           },
         });
-        return () => mm.revert();
       }
     );
+    return () => mm.revert();
   }, { scope: standingsRef });
 
   driverRowRefs.current = [];

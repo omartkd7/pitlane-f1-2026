@@ -7,7 +7,7 @@ import races from '../data/races.js';
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
 import './Alerts.css';
 
-gsap.registerPlugin(ScrollTrigger);
+// ScrollTrigger already registered in main.jsx
 
 const flagEmoji = (code) =>
   [...code.toUpperCase()]

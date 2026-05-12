@@ -57,9 +57,9 @@ export const Calendar = () => {
           duration: isNormal ? 0.4 : 0,
           ease: 'power2.out',
         });
-        return () => mm.revert();
       }
     );
+    return () => mm.revert();
   }, { scope: containerRef });
 
   // filter transition
