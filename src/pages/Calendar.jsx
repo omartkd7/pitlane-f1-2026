@@ -1,4 +1,5 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
+import { flushSync } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
@@ -7,118 +8,163 @@ import races from '../data/races.js';
 import { RaceCard } from '../components/RaceCard.jsx';
 import './Calendar.css';
 
-const CONTINENTS = ['Tous', 'Europe', 'Americas', 'Asia', 'Oceania', 'MiddleEast'];
-const CONTINENT_LABELS = {
-  Tous: 'Tous',
-  Europe: 'Europe',
-  Americas: 'Amériques',
-  Asia: 'Asie',
-  Oceania: 'Océanie',
-  MiddleEast: 'Moyen-Orient',
+const REGIONS = ['Tous', 'Europe', 'Americas', 'Asia', 'Oceania', 'MiddleEast'];
+const REGION_LABELS = {
+  Tous: 'Tous', Europe: 'Europe', Americas: 'Amériques',
+  Asia: 'Asie', Oceania: 'Océanie', MiddleEast: 'Moyen-Orient',
+};
+const REGION_COUNTS = {
+  Europe: 10, Americas: 6, Asia: 5, Oceania: 1, MiddleEast: 2,
 };
 
 const TYPES = ['Tous', 'Sprint', 'Standard'];
-const TYPE_LABELS = {
-  Tous: 'Tous',
-  Sprint: 'Sprint',
-  Standard: 'Standard',
-};
+const TYPE_LABELS  = { Tous: 'Tous', Sprint: 'Sprint', Standard: 'Standard' };
+const TYPE_COUNTS  = { Sprint: 6, Standard: 18 };
 
 export const Calendar = () => {
-  const containerRef = useRef(null);
+  const containerRef  = useRef(null);
+  const cardRefs      = useRef([]);
+  const isFirstRender = useRef(true);
 
-  const [selectedContinent, setSelectedContinent] = useState('Tous');
-  const [selectedType, setSelectedType] = useState('Tous');
+  const [selectedRegion, setSelectedRegion] = useState('Tous');
+  const [selectedType,   setSelectedType]   = useState('Tous');
 
-  const filteredRaces = useMemo(() => {
-    return races.filter((race) => {
-      const continentMatch =
-        selectedContinent === 'Tous' || race.continent === selectedContinent;
-      const typeMatch =
-        selectedType === 'Tous' ||
-        (selectedType === 'Sprint' && race.isSprint) ||
-        (selectedType === 'Standard' && !race.isSprint);
-      return continentMatch && typeMatch;
-    });
-  }, [selectedContinent, selectedType]);
+  const filteredRaces = useMemo(() =>
+    races.filter((r) => {
+      const regionOk = selectedRegion === 'Tous' || r.continent === selectedRegion;
+      const typeOk   = selectedType   === 'Tous' ||
+        (selectedType === 'Sprint'   &&  r.isSprint) ||
+        (selectedType === 'Standard' && !r.isSprint);
+      return regionOk && typeOk;
+    }),
+  [selectedRegion, selectedType]);
 
-  // Per-card ScrollTrigger — re-runs on every filter change, previous triggers auto-cleaned
+  const [displayedRaces, setDisplayedRaces] = useState(filteredRaces);
+
+  // initial stagger
   useGSAP(() => {
-    if (!containerRef.current) return;
-    const cards = containerRef.current.querySelectorAll('.race-card');
+    const cards = cardRefs.current.filter(Boolean);
     if (!cards.length) return;
-    const mm = gsap.matchMedia();
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
-      cards.forEach((card) => {
-        gsap.from(card, {
-          autoAlpha: 0,
-          y: 30,
-          duration: 0.5,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: card,
-            start: 'top 90%',
-            toggleActions: 'play none none none',
-          },
-        });
+    gsap.from(cards, { opacity: 0, y: 20, stagger: 0.05, duration: 0.4, ease: 'power2.out' });
+  }, { scope: containerRef });
+
+  // filter transition
+  useGSAP(() => {
+    if (isFirstRender.current) { isFirstRender.current = false; return; }
+    const out = cardRefs.current.filter(Boolean);
+    if (!out.length) { setDisplayedRaces(filteredRaces); return; }
+    gsap.timeline()
+      .to(out, { opacity: 0, y: -8, stagger: 0.02, duration: 0.15 })
+      .call(() => flushSync(() => setDisplayedRaces(filteredRaces)))
+      .call(() => {
+        const inCards = cardRefs.current.filter(Boolean);
+        if (inCards.length) gsap.from(inCards, { opacity: 0, y: 16, stagger: 0.04, duration: 0.3 });
       });
-      ScrollTrigger.refresh();
-    });
   }, { scope: containerRef, dependencies: [filteredRaces] });
 
-  const gp = filteredRaces.length;
-  const subtitle = `${gp} Grand${gp > 1 ? 's' : ''} Prix`;
+  // scroll reveal
+  useGSAP(() => {
+    cardRefs.current.filter(Boolean).forEach((card) => {
+      gsap.from(card, {
+        opacity: 0, y: 14, duration: 0.35,
+        scrollTrigger: { trigger: card, start: 'top 92%' },
+      });
+    });
+  }, { scope: containerRef, dependencies: [displayedRaces] });
+
+  useEffect(() => { ScrollTrigger.refresh(); }, [filteredRaces]);
+
+  cardRefs.current = [];
+
+  const count = filteredRaces.length;
 
   return (
     <div className="page calendar">
-      <h1 className="calendar__title">Calendrier 2026</h1>
-      <p className="calendar__subtitle">{subtitle}</p>
+
+      {/* ── Breadcrumb ── */}
+      <div className="cal-subbar">
+        <span className="cal-subbar__crumbs">
+          Calendrier <em>/</em> <span>Saison 2026</span> <em>/</em> {races.length} manches
+        </span>
+        <span>Mise à jour officielle · Saison 2026</span>
+      </div>
+
+      {/* ── Masthead ── */}
+      <section className="cal-head">
+        <div className="cal-head__ghost" aria-hidden="true">26</div>
+        <div className="cal-head__main">
+          <div className="cal-head__eyebrow">
+            <span className="cal-pill">Saison · 2026</span>
+            <span>{races.length} Grands Prix · 6 Sprints · 5 continents</span>
+            <span className="cal-head__bar" />
+            <span>Mise à jour FIA</span>
+          </div>
+          <h1 className="cal-head__title">
+            CALENDRIER<br />
+            <span className="accent">SAISON 2026</span>
+          </h1>
+        </div>
+        <aside className="cal-head__side">
+          <div className="cal-stat"><span>Manches</span><b>{races.length}</b></div>
+          <div className="cal-stat"><span>Sprint Week-ends</span><b className="red">06</b></div>
+          <div className="cal-stat"><span>Résultats affichés</span><b>{count}</b></div>
+          <div className="cal-stat"><span>Période</span><b>MAR → DÉC</b></div>
+        </aside>
+      </section>
 
       {/* ── Filters ── */}
-      <div className="calendar__filters">
-        <div className="filter-group">
-          <span className="filter-group__label">Continent</span>
-          <div className="filter-group__buttons">
-            {CONTINENTS.map((c) => (
+      <div className="cal-filters">
+        <div className="filter-row">
+          <span className="filter-row__label">/ Région <b>FILTRE</b></span>
+          <div className="filter-pills">
+            {REGIONS.map((r) => (
               <button
-                key={c}
-                className={`filter-btn${selectedContinent === c ? ' filter-btn--active' : ''}`}
-                onClick={() => setSelectedContinent(c)}
+                key={r}
+                className={`filter-pill${selectedRegion === r ? ' active' : ''}`}
+                onClick={() => setSelectedRegion(r)}
               >
-                {CONTINENT_LABELS[c]}
+                {REGION_LABELS[r]}
+                {r !== 'Tous' && <span className="filter-pill__ct">{REGION_COUNTS[r] || ''}</span>}
+                {r === 'Tous' && <span className="filter-pill__ct">{races.length}</span>}
               </button>
             ))}
           </div>
         </div>
-
-        <div className="filter-group">
-          <span className="filter-group__label">Type</span>
-          <div className="filter-group__buttons">
+        <div className="filter-row">
+          <span className="filter-row__label">/ Format <b>FILTRE</b></span>
+          <div className="filter-pills">
             {TYPES.map((t) => (
               <button
                 key={t}
-                className={`filter-btn${selectedType === t ? ' filter-btn--active' : ''}`}
+                className={`filter-pill${selectedType === t ? ' active' : ''}`}
                 onClick={() => setSelectedType(t)}
               >
                 {TYPE_LABELS[t]}
+                {t !== 'Tous' && <span className="filter-pill__ct">{TYPE_COUNTS[t] || ''}</span>}
+                {t === 'Tous' && <span className="filter-pill__ct">{races.length}</span>}
               </button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* ── Grid or empty state ── */}
-      {filteredRaces.length === 0 ? (
-        <p className="calendar__empty">
-          Aucune course ne correspond aux filtres sélectionnés.
-        </p>
+      {/* ── Section header ── */}
+      <div className="sec-head">
+        <h2><span className="num">§01</span>SAISON 2026</h2>
+        <span className="meta-right">Affichées · <b style={{ color: 'var(--text)' }}>{count}</b></span>
+      </div>
+
+      {/* ── Grid ── */}
+      {displayedRaces.length === 0 ? (
+        <p className="cal-empty">Aucune course ne correspond aux filtres sélectionnés.</p>
       ) : (
         <div className="race-grid" ref={containerRef}>
-          {filteredRaces.map((race) => (
+          {displayedRaces.map((race, i) => (
             <Link
               key={race.id}
               to={`/calendrier/${race.id}`}
               className="race-grid__link"
+              ref={(el) => { cardRefs.current[i] = el; }}
             >
               <RaceCard race={race} />
             </Link>

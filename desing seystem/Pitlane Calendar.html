@@ -1,0 +1,859 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>PIT·LANE — Calendrier 2026</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0A;
+    --card:#1A1A1A;
+    --ink:#F0EDE8;
+    --silver:#9A9A96;
+    --red:#E5001A;
+    --rule:rgba(240,237,232,.14);
+    --rule-strong:rgba(240,237,232,.28);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;border-radius:0 !important;}
+  html,body{background:var(--bg);color:var(--ink);font-family:"Barlow Condensed",sans-serif;-webkit-font-smoothing:antialiased;}
+  body{min-height:100vh;overflow-x:hidden;}
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace;letter-spacing:.02em;}
+  .upper{text-transform:uppercase;}
+
+  .page{max-width:1480px;margin:0 auto;padding:0 56px 80px;position:relative;}
+
+  /* corner ticks */
+  .ticks{position:fixed;inset:0;pointer-events:none;z-index:50;}
+  .ticks span{position:absolute;width:14px;height:14px;border:1px solid var(--rule-strong);}
+  .ticks span.tl{top:18px;left:18px;border-right:none;border-bottom:none;}
+  .ticks span.tr{top:18px;right:18px;border-left:none;border-bottom:none;}
+  .ticks span.bl{bottom:18px;left:18px;border-right:none;border-top:none;}
+  .ticks span.br{bottom:18px;right:18px;border-left:none;border-top:none;}
+
+  /* top status */
+  .status{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:14px 0;border-bottom:1px solid var(--rule);
+    font-size:11px;color:var(--silver);
+  }
+  .status .live{color:var(--ink);display:inline-flex;align-items:center;gap:8px;}
+  .dot{width:6px;height:6px;background:var(--red);display:inline-block;animation:blink 1.4s infinite;}
+  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:.2}}
+
+  /* navbar */
+  nav.bar{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    padding:34px 0 22px;border-bottom:1px solid var(--rule);
+  }
+  .logo{
+    font-weight:900;font-size:34px;letter-spacing:.02em;line-height:1;
+    transform:scaleX(.86);transform-origin:left center;
+    display:inline-flex;align-items:center;
+  }
+  .logo .sep{display:inline-block;width:6px;height:6px;background:var(--red);margin:0 4px 6px;}
+  .nav-links{display:flex;gap:42px;align-items:center;}
+  .nav-links a{
+    color:var(--silver);text-decoration:none;
+    font-family:"JetBrains Mono",monospace;font-weight:500;font-size:12px;
+    letter-spacing:.14em;text-transform:uppercase;
+    padding:6px 0;border-bottom:2px solid transparent;transition:color .15s;
+  }
+  .nav-links a:hover{color:var(--ink);}
+  .nav-links a.active{color:var(--ink);border-bottom-color:var(--red);}
+  .nav-links .num{color:var(--red);margin-right:6px;}
+
+  /* breadcrumb */
+  .subbar{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 0;border-bottom:1px solid var(--rule);
+    font-size:11px;color:var(--silver);
+  }
+  .subbar .crumbs span{color:var(--ink);}
+  .subbar .crumbs em{color:var(--red);font-style:normal;}
+
+  /* MASTHEAD */
+  .head{
+    display:grid;grid-template-columns:1fr 360px;gap:48px;align-items:end;
+    padding:54px 0 36px;border-bottom:1px solid var(--rule);
+    position:relative;overflow:hidden;
+  }
+  .head .ghost{
+    position:absolute;right:-30px;top:50%;transform:translateY(-50%);
+    font-weight:900;font-size:360px;line-height:.8;letter-spacing:-.04em;
+    color:transparent;
+    -webkit-text-stroke:1.5px rgba(229,0,26,.14);
+    pointer-events:none;user-select:none;
+  }
+  .head-main{position:relative;z-index:1;}
+  .eyebrow{
+    display:flex;align-items:center;gap:14px;
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.18em;
+    margin-bottom:18px;
+  }
+  .eyebrow .pill{border:1px solid var(--rule-strong);padding:4px 10px;color:var(--ink);font-weight:500;}
+  .eyebrow .bar{flex:1;height:1px;background:var(--rule);}
+  h1.bigtitle{
+    font-weight:900;font-size:148px;line-height:.86;
+    letter-spacing:-.015em;text-transform:uppercase;
+    transform:scaleX(.94);transform-origin:left;
+  }
+  h1.bigtitle .accent{color:var(--red);}
+  .head-side{position:relative;z-index:1;border:1px solid var(--rule);padding:16px 18px;}
+  .head-side .k{
+    font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--silver);
+    text-transform:uppercase;letter-spacing:.22em;
+    display:flex;justify-content:space-between;padding:8px 0;
+    border-bottom:1px solid var(--rule);
+  }
+  .head-side .k:last-child{border-bottom:none;}
+  .head-side .k b{color:var(--ink);font-weight:500;}
+  .head-side .k .red{color:var(--red);}
+
+  /* FILTERS */
+  .filters{
+    padding:28px 0 22px;border-bottom:1px solid var(--rule);
+    display:grid;grid-template-columns:120px 1fr auto;gap:24px;align-items:center;
+  }
+  .filters .filt-label{
+    font-family:"JetBrains Mono",monospace;font-size:10px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.22em;
+  }
+  .filters .filt-label b{color:var(--ink);}
+  .pills{display:flex;gap:8px;flex-wrap:wrap;}
+  .pill{
+    font-family:"JetBrains Mono",monospace;font-weight:500;font-size:11px;
+    text-transform:uppercase;letter-spacing:.16em;
+    padding:8px 14px;border:1px solid var(--rule-strong);color:var(--silver);
+    cursor:pointer;background:transparent;
+    transition:color .12s,background .12s,border-color .12s;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .pill:hover{color:var(--ink);border-color:var(--ink);}
+  .pill .ct{color:var(--rule-strong);font-weight:400;}
+  .pill.active{background:var(--red);border-color:var(--red);color:#0A0A0A;font-weight:700;}
+  .pill.active .ct{color:rgba(10,10,10,.55);}
+  .filt-end{
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.16em;
+    display:flex;align-items:center;gap:14px;
+  }
+  .filt-end .switch{
+    border:1px solid var(--rule-strong);padding:7px 12px;color:var(--ink);
+    display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  }
+  .filt-end .switch .x{color:var(--red);}
+
+  /* second row */
+  .filters-row2{
+    display:grid;grid-template-columns:120px 1fr;gap:24px;align-items:center;
+    padding:14px 0;border-bottom:1px solid var(--rule);
+  }
+
+  /* SECTION HEADER */
+  .sec-head{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    padding:36px 0 14px;border-bottom:1px solid var(--rule);
+  }
+  .sec-head h2{
+    font-weight:900;font-size:38px;line-height:1;text-transform:uppercase;
+  }
+  .sec-head h2 .num{color:var(--red);margin-right:14px;}
+  .sec-head .right{
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.18em;
+    display:flex;gap:18px;
+  }
+  .sec-head .right b{color:var(--ink);}
+
+  /* GRID */
+  .grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:18px;
+    margin-top:22px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--rule);
+    border-left:3px solid var(--red);
+    padding:22px 22px 20px;
+    position:relative;overflow:hidden;
+    min-height:240px;
+    display:flex;flex-direction:column;justify-content:space-between;
+    cursor:pointer;
+    transition:border-color .15s,transform .15s;
+  }
+  .card:hover{border-color:var(--rule-strong);border-left-color:var(--red);}
+  .card .ghost-num{
+    position:absolute;right:-22px;bottom:-58px;
+    font-weight:900;font-size:280px;line-height:.8;letter-spacing:-.05em;
+    color:rgba(240,237,232,.04);
+    pointer-events:none;user-select:none;
+    text-transform:uppercase;
+  }
+
+  .card-top{
+    display:flex;justify-content:space-between;align-items:flex-start;
+    position:relative;z-index:1;
+  }
+  .round-lbl{
+    font-family:"JetBrains Mono",monospace;font-weight:700;font-size:11px;
+    color:var(--red);text-transform:uppercase;letter-spacing:.22em;
+  }
+  .round-lbl .of{color:var(--silver);font-weight:400;}
+  .badges{display:flex;gap:6px;align-items:center;}
+  .badge{
+    font-family:"JetBrains Mono",monospace;font-weight:700;font-size:10px;
+    text-transform:uppercase;letter-spacing:.18em;
+    padding:4px 8px;line-height:1;
+  }
+  .badge.sprint{background:var(--red);color:#0A0A0A;}
+  .badge.newb{border:1px solid var(--ink);color:var(--ink);}
+  .badge.night{border:1px solid var(--rule-strong);color:var(--silver);}
+  .bookmark{
+    width:14px;height:18px;display:inline-block;
+    border:1px solid var(--silver);border-bottom:none;
+    position:relative;cursor:pointer;
+  }
+  .bookmark::after{
+    content:"";position:absolute;left:-1px;right:-1px;bottom:-7px;
+    border-left:7px solid transparent;border-right:7px solid transparent;
+    border-top:7px solid var(--bg);
+  }
+  .card.saved .bookmark{background:var(--red);border-color:var(--red);}
+  .card.saved .bookmark::after{border-top-color:var(--card);}
+
+  .card-mid{position:relative;z-index:1;margin:22px 0 18px;}
+  .gp{
+    font-weight:900;font-size:34px;line-height:.95;text-transform:uppercase;
+    letter-spacing:-.005em;color:var(--ink);
+  }
+  .circuit{
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.1em;
+    margin-top:10px;
+  }
+  .card-foot{
+    position:relative;z-index:1;
+    display:flex;justify-content:space-between;align-items:center;
+    padding-top:14px;border-top:1px solid var(--rule);
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.1em;
+  }
+  .card-foot .flag{font-size:20px;line-height:1;}
+  .card-foot .date b{color:var(--ink);font-weight:500;}
+  .card-foot .stat{color:var(--silver);text-align:right;}
+
+  /* status indicators on cards */
+  .card.live{border-left-color:var(--red);}
+  .card.live .live-tag{
+    position:absolute;top:0;right:0;
+    background:var(--red);color:#0A0A0A;
+    font-family:"JetBrains Mono",monospace;font-weight:700;font-size:9px;
+    padding:5px 9px;letter-spacing:.22em;text-transform:uppercase;
+    display:inline-flex;align-items:center;gap:6px;z-index:2;
+  }
+  .card.live .live-tag::before{
+    content:"";width:6px;height:6px;background:#0A0A0A;animation:blink 1.4s infinite;
+  }
+  .card.past{opacity:.55;}
+  .card.past .gp{color:var(--silver);}
+  .card.past .round-lbl{color:var(--silver);}
+  .card.past .border-strike{
+    position:absolute;left:0;right:0;top:50%;height:1px;background:var(--rule);z-index:0;
+  }
+  .card.past .winner{
+    font-family:"JetBrains Mono",monospace;font-size:10px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.18em;
+    margin-top:6px;
+  }
+  .card.past .winner b{color:var(--ink);}
+
+  /* footer */
+  .foot{
+    margin-top:60px;padding-top:18px;border-top:1px solid var(--rule);
+    display:flex;justify-content:space-between;
+    font-family:"JetBrains Mono",monospace;font-size:10px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.2em;
+  }
+  .foot .ver b{color:var(--ink);}
+
+  @media (max-width:1180px){
+    .grid{grid-template-columns:repeat(2,1fr);}
+    h1.bigtitle{font-size:96px;}
+    .head{grid-template-columns:1fr;}
+    .head .ghost{font-size:240px;}
+  }
+  @media (max-width:720px){
+    .grid{grid-template-columns:1fr;}
+    .page{padding:0 24px 60px;}
+    .filters,.filters-row2{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+
+<div class="page">
+
+  <!-- status -->
+  <div class="status mono upper">
+    <div>FR · CET 14:42 — Saison 2026 · Édition #248</div>
+    <div class="live"><span class="dot"></span>Round 07 en cours · Montréal · FP1 en direct</div>
+    <div>Synchronisation calendrier · 06:12 CET</div>
+  </div>
+
+  <!-- navbar -->
+  <nav class="bar">
+    <div class="logo">PIT<span class="sep"></span>LANE</div>
+    <div class="nav-links">
+      <a href="Pitlane Hero.html"><span class="num">01</span>PADDOCK</a>
+      <a href="#" class="active"><span class="num">02</span>CALENDRIER</a>
+      <a href="#"><span class="num">03</span>MON GARAGE</a>
+      <a href="#"><span class="num">04</span>MA SAISON</a>
+    </div>
+  </nav>
+
+  <!-- breadcrumb -->
+  <div class="subbar mono upper">
+    <div class="crumbs">Calendrier <em>/</em> <span>Saison 2026</span> <em>/</em> 24 manches</div>
+    <div>Imprimé numériquement · 11 Mai 2026</div>
+  </div>
+
+  <!-- masthead -->
+  <section class="head">
+    <div class="ghost">26</div>
+    <div class="head-main">
+      <div class="eyebrow">
+        <span class="pill">Saison · 2026</span>
+        <span>24 Grands Prix · 6 Sprints · 5 continents</span>
+        <span class="bar"></span>
+        <span>Mise à jour officielle FIA</span>
+      </div>
+      <h1 class="bigtitle">CALENDRIER<br/><span class="accent">SAISON 2026</span></h1>
+    </div>
+
+    <aside class="head-side">
+      <div class="k"><span>Manches</span><b>24</b></div>
+      <div class="k"><span>Sprint Week-ends</span><b class="red">06</b></div>
+      <div class="k"><span>Course en cours</span><b>R07 · CAN</b></div>
+      <div class="k"><span>Prochaine manche</span><b>R08 · ESP</b></div>
+      <div class="k"><span>Saison · Période</span><b>07 MAR → 29 NOV</b></div>
+      <div class="k"><span>Heures de course</span><b>~ 48H 12M</b></div>
+    </aside>
+  </section>
+
+  <!-- FILTERS -->
+  <section class="filters">
+    <div class="filt-label">/ Filtrer par <b>RÉGION</b></div>
+    <div class="pills" id="region">
+      <button class="pill active">Tous <span class="ct">24</span></button>
+      <button class="pill">Europe <span class="ct">10</span></button>
+      <button class="pill">Amériques <span class="ct">06</span></button>
+      <button class="pill">Asie-Pacifique <span class="ct">05</span></button>
+      <button class="pill">Moyen-Orient <span class="ct">03</span></button>
+    </div>
+    <div class="filt-end">
+      <span class="switch">Vue <span class="x">▣</span> Cartes</span>
+      <span class="switch">Trier · Chrono.</span>
+    </div>
+  </section>
+
+  <section class="filters-row2">
+    <div class="filt-label">/ Filtrer par <b>FORMAT</b></div>
+    <div class="pills" id="format">
+      <button class="pill active">Tous <span class="ct">24</span></button>
+      <button class="pill">Sprint <span class="ct">06</span></button>
+      <button class="pill">Standard <span class="ct">18</span></button>
+    </div>
+  </section>
+
+  <!-- section header: passées -->
+  <div class="sec-head">
+    <h2><span class="num">§01</span>MANCHES TERMINÉES</h2>
+    <div class="right"><span>Affichées · <b>06</b></span><span>Période · <b>MAR → MAI</b></span></div>
+  </div>
+
+  <div class="grid" id="grid-past">
+    <!-- 01 Australie -->
+    <article class="card past">
+      <span class="ghost-num">01</span>
+      <div class="card-top">
+        <div class="round-lbl">R 01<span class="of"> / 24</span></div>
+        <div class="badges"><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>d'Australie</div>
+        <div class="circuit">Albert Park · Melbourne</div>
+        <div class="winner">Vainqueur · <b>M. VERSTAPPEN</b></div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇦🇺</span>
+        <span class="date"><b>07</b> — 09 MAR</span>
+        <span class="stat">L01 · 1:21.443</span>
+      </div>
+    </article>
+
+    <!-- 02 Chine -->
+    <article class="card past">
+      <span class="ghost-num">02</span>
+      <div class="card-top">
+        <div class="round-lbl">R 02<span class="of"> / 24</span></div>
+        <div class="badges"><span class="badge sprint">SPRINT</span><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>de Chine</div>
+        <div class="circuit">Shanghai Int'l Circuit</div>
+        <div class="winner">Vainqueur · <b>L. NORRIS</b></div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇨🇳</span>
+        <span class="date"><b>21</b> — 23 MAR</span>
+        <span class="stat">L56 · 1:32.117</span>
+      </div>
+    </article>
+
+    <!-- 03 Japon -->
+    <article class="card past">
+      <span class="ghost-num">03</span>
+      <div class="card-top">
+        <div class="round-lbl">R 03<span class="of"> / 24</span></div>
+        <div class="badges"><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>du Japon</div>
+        <div class="circuit">Suzuka International Racing Course</div>
+        <div class="winner">Vainqueur · <b>O. PIASTRI</b></div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇯🇵</span>
+        <span class="date"><b>04</b> — 06 AVR</span>
+        <span class="stat">L53 · 1:28.901</span>
+      </div>
+    </article>
+
+    <!-- 04 Bahreïn -->
+    <article class="card past">
+      <span class="ghost-num">04</span>
+      <div class="card-top">
+        <div class="round-lbl">R 04<span class="of"> / 24</span></div>
+        <div class="badges"><span class="badge night">NUIT</span><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>de Bahreïn</div>
+        <div class="circuit">Bahrain Int'l Circuit · Sakhir</div>
+        <div class="winner">Vainqueur · <b>C. LECLERC</b></div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇧🇭</span>
+        <span class="date"><b>11</b> — 13 AVR</span>
+        <span class="stat">L57 · 1:33.812</span>
+      </div>
+    </article>
+
+    <!-- 05 Arabie -->
+    <article class="card past saved">
+      <span class="ghost-num">05</span>
+      <div class="card-top">
+        <div class="round-lbl">R 05<span class="of"> / 24</span></div>
+        <div class="badges"><span class="badge night">NUIT</span><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>d'Arabie Saoudite</div>
+        <div class="circuit">Jeddah Corniche Circuit</div>
+        <div class="winner">Vainqueur · <b>M. VERSTAPPEN</b></div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇸🇦</span>
+        <span class="date"><b>18</b> — 20 AVR</span>
+        <span class="stat">L50 · 1:29.404</span>
+      </div>
+    </article>
+
+    <!-- 06 Miami -->
+    <article class="card past">
+      <span class="ghost-num">06</span>
+      <div class="card-top">
+        <div class="round-lbl">R 06<span class="of"> / 24</span></div>
+        <div class="badges"><span class="badge sprint">SPRINT</span><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>de Miami</div>
+        <div class="circuit">Miami Int'l Autodrome · Hard Rock</div>
+        <div class="winner">Vainqueur · <b>L. NORRIS</b></div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇺🇸</span>
+        <span class="date"><b>02</b> — 04 MAI</span>
+        <span class="stat">L57 · 1:30.012</span>
+      </div>
+    </article>
+  </div>
+
+  <!-- section header: en cours / à venir -->
+  <div class="sec-head">
+    <h2><span class="num">§02</span>EN COURS &amp; À VENIR</h2>
+    <div class="right"><span>Affichées · <b>18</b></span><span>Période · <b>MAI → NOV</b></span></div>
+  </div>
+
+  <div class="grid">
+
+    <!-- 07 Canada - LIVE -->
+    <article class="card live saved">
+      <span class="live-tag">● LIVE FP1</span>
+      <span class="ghost-num">07</span>
+      <div class="card-top">
+        <div class="round-lbl">R 07<span class="of"> / 24</span></div>
+        <div class="badges"><span class="badge sprint">SPRINT</span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>du Canada</div>
+        <div class="circuit">Circuit Gilles Villeneuve · Montréal</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇨🇦</span>
+        <span class="date"><b>12</b> — 14 JUIN</span>
+        <span class="stat">70 T · 4.361 KM</span>
+      </div>
+    </article>
+
+    <!-- 08 Espagne -->
+    <article class="card">
+      <span class="ghost-num">08</span>
+      <div class="card-top">
+        <div class="round-lbl">R 08<span class="of"> / 24</span></div>
+        <div class="badges"><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>d'Espagne</div>
+        <div class="circuit">Circuit de Barcelona-Catalunya</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇪🇸</span>
+        <span class="date"><b>19</b> — 21 JUIN</span>
+        <span class="stat">66 T · 4.657 KM</span>
+      </div>
+    </article>
+
+    <!-- 09 Autriche -->
+    <article class="card saved">
+      <span class="ghost-num">09</span>
+      <div class="card-top">
+        <div class="round-lbl">R 09<span class="of"> / 24</span></div>
+        <div class="badges"><span class="badge sprint">SPRINT</span><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>d'Autriche</div>
+        <div class="circuit">Red Bull Ring · Spielberg</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇦🇹</span>
+        <span class="date"><b>03</b> — 05 JUIL</span>
+        <span class="stat">71 T · 4.318 KM</span>
+      </div>
+    </article>
+
+    <!-- 10 Royaume-Uni -->
+    <article class="card">
+      <span class="ghost-num">10</span>
+      <div class="card-top">
+        <div class="round-lbl">R 10<span class="of"> / 24</span></div>
+        <div class="badges"><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>de Grande-Bretagne</div>
+        <div class="circuit">Silverstone Circuit</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇬🇧</span>
+        <span class="date"><b>10</b> — 12 JUIL</span>
+        <span class="stat">52 T · 5.891 KM</span>
+      </div>
+    </article>
+
+    <!-- 11 Belgique -->
+    <article class="card">
+      <span class="ghost-num">11</span>
+      <div class="card-top">
+        <div class="round-lbl">R 11<span class="of"> / 24</span></div>
+        <div class="badges"><span class="badge sprint">SPRINT</span><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>de Belgique</div>
+        <div class="circuit">Spa-Francorchamps</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇧🇪</span>
+        <span class="date"><b>24</b> — 26 JUIL</span>
+        <span class="stat">44 T · 7.004 KM</span>
+      </div>
+    </article>
+
+    <!-- 12 Hongrie -->
+    <article class="card">
+      <span class="ghost-num">12</span>
+      <div class="card-top">
+        <div class="round-lbl">R 12<span class="of"> / 24</span></div>
+        <div class="badges"><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>de Hongrie</div>
+        <div class="circuit">Hungaroring · Mogyoród</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇭🇺</span>
+        <span class="date"><b>31</b> JUIL — 02 AOÛT</span>
+        <span class="stat">70 T · 4.381 KM</span>
+      </div>
+    </article>
+
+    <!-- 13 Pays-Bas -->
+    <article class="card">
+      <span class="ghost-num">13</span>
+      <div class="card-top">
+        <div class="round-lbl">R 13<span class="of"> / 24</span></div>
+        <div class="badges"><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>des Pays-Bas</div>
+        <div class="circuit">Circuit Zandvoort</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇳🇱</span>
+        <span class="date"><b>21</b> — 23 AOÛT</span>
+        <span class="stat">72 T · 4.259 KM</span>
+      </div>
+    </article>
+
+    <!-- 14 Italie -->
+    <article class="card saved">
+      <span class="ghost-num">14</span>
+      <div class="card-top">
+        <div class="round-lbl">R 14<span class="of"> / 24</span></div>
+        <div class="badges"><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>d'Italie</div>
+        <div class="circuit">Autodromo Nazionale Monza</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇮🇹</span>
+        <span class="date"><b>04</b> — 06 SEP</span>
+        <span class="stat">53 T · 5.793 KM</span>
+      </div>
+    </article>
+
+    <!-- 15 Azerbaïdjan -->
+    <article class="card">
+      <span class="ghost-num">15</span>
+      <div class="card-top">
+        <div class="round-lbl">R 15<span class="of"> / 24</span></div>
+        <div class="badges"><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>d'Azerbaïdjan</div>
+        <div class="circuit">Baku City Circuit</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇦🇿</span>
+        <span class="date"><b>18</b> — 20 SEP</span>
+        <span class="stat">51 T · 6.003 KM</span>
+      </div>
+    </article>
+
+    <!-- 16 Singapour -->
+    <article class="card">
+      <span class="ghost-num">16</span>
+      <div class="card-top">
+        <div class="round-lbl">R 16<span class="of"> / 24</span></div>
+        <div class="badges"><span class="badge night">NUIT</span><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>de Singapour</div>
+        <div class="circuit">Marina Bay Street Circuit</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇸🇬</span>
+        <span class="date"><b>02</b> — 04 OCT</span>
+        <span class="stat">62 T · 4.940 KM</span>
+      </div>
+    </article>
+
+    <!-- 17 Rwanda - NEW -->
+    <article class="card">
+      <span class="ghost-num">17</span>
+      <div class="card-top">
+        <div class="round-lbl">R 17<span class="of"> / 24</span></div>
+        <div class="badges"><span class="badge newb">NOUVEAU</span><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>du Rwanda</div>
+        <div class="circuit">Kigali Street Circuit (provisoire)</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇷🇼</span>
+        <span class="date"><b>16</b> — 18 OCT</span>
+        <span class="stat">58 T · 5.180 KM</span>
+      </div>
+    </article>
+
+    <!-- 18 USA Austin -->
+    <article class="card">
+      <span class="ghost-num">18</span>
+      <div class="card-top">
+        <div class="round-lbl">R 18<span class="of"> / 24</span></div>
+        <div class="badges"><span class="badge sprint">SPRINT</span><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>des États-Unis</div>
+        <div class="circuit">Circuit of the Americas · Austin</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇺🇸</span>
+        <span class="date"><b>23</b> — 25 OCT</span>
+        <span class="stat">56 T · 5.513 KM</span>
+      </div>
+    </article>
+
+    <!-- 19 Mexique -->
+    <article class="card">
+      <span class="ghost-num">19</span>
+      <div class="card-top">
+        <div class="round-lbl">R 19<span class="of"> / 24</span></div>
+        <div class="badges"><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>du Mexique</div>
+        <div class="circuit">Autódromo Hermanos Rodríguez</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇲🇽</span>
+        <span class="date"><b>30</b> OCT — 01 NOV</span>
+        <span class="stat">71 T · 4.304 KM</span>
+      </div>
+    </article>
+
+    <!-- 20 Brésil -->
+    <article class="card">
+      <span class="ghost-num">20</span>
+      <div class="card-top">
+        <div class="round-lbl">R 20<span class="of"> / 24</span></div>
+        <div class="badges"><span class="badge sprint">SPRINT</span><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>de São Paulo</div>
+        <div class="circuit">Autódromo de Interlagos</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇧🇷</span>
+        <span class="date"><b>06</b> — 08 NOV</span>
+        <span class="stat">71 T · 4.309 KM</span>
+      </div>
+    </article>
+
+    <!-- 21 Vegas - NIGHT -->
+    <article class="card">
+      <span class="ghost-num">21</span>
+      <div class="card-top">
+        <div class="round-lbl">R 21<span class="of"> / 24</span></div>
+        <div class="badges"><span class="badge night">NUIT</span><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>de Las Vegas</div>
+        <div class="circuit">Las Vegas Strip Circuit</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇺🇸</span>
+        <span class="date"><b>19</b> — 21 NOV</span>
+        <span class="stat">50 T · 6.201 KM</span>
+      </div>
+    </article>
+
+    <!-- 22 Qatar -->
+    <article class="card">
+      <span class="ghost-num">22</span>
+      <div class="card-top">
+        <div class="round-lbl">R 22<span class="of"> / 24</span></div>
+        <div class="badges"><span class="badge sprint">SPRINT</span><span class="badge night">NUIT</span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>du Qatar</div>
+        <div class="circuit">Lusail International Circuit</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇶🇦</span>
+        <span class="date"><b>27</b> — 29 NOV</span>
+        <span class="stat">57 T · 5.419 KM</span>
+      </div>
+    </article>
+
+    <!-- 23 Abu Dhabi -->
+    <article class="card saved">
+      <span class="ghost-num">23</span>
+      <div class="card-top">
+        <div class="round-lbl">R 23<span class="of"> / 24</span></div>
+        <div class="badges"><span class="badge night">NUIT</span><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>d'Abu Dhabi</div>
+        <div class="circuit">Yas Marina Circuit</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇦🇪</span>
+        <span class="date"><b>04</b> — 06 DÉC</span>
+        <span class="stat">58 T · 5.281 KM</span>
+      </div>
+    </article>
+
+    <!-- 24 Madrid - NEW (relocated, hypothetical) -->
+    <article class="card">
+      <span class="ghost-num">24</span>
+      <div class="card-top">
+        <div class="round-lbl">R 24<span class="of"> / 24</span></div>
+        <div class="badges"><span class="badge newb">NOUVEAU</span><span class="bookmark"></span></div>
+      </div>
+      <div class="card-mid">
+        <div class="gp">Grand Prix<br/>de Madrid</div>
+        <div class="circuit">IFEMA Madring (provisoire)</div>
+      </div>
+      <div class="card-foot">
+        <span class="flag">🇪🇸</span>
+        <span class="date"><b>11</b> — 13 DÉC</span>
+        <span class="stat">59 T · 5.474 KM</span>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- foot -->
+  <div class="foot">
+    <div class="ver">PIT·LANE <b>v26.06.1</b> — Companion non officiel · Calendrier sujet à modifications FIA</div>
+    <div>24 manches · 06 sprints · 1 saison</div>
+  </div>
+
+</div>
+
+<script>
+  // Toggle pills (single-select per row)
+  document.querySelectorAll('.pills').forEach(row=>{
+    row.addEventListener('click',e=>{
+      const btn = e.target.closest('.pill');
+      if(!btn) return;
+      row.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+  // Toggle bookmark
+  document.querySelectorAll('.bookmark').forEach(bm=>{
+    bm.addEventListener('click',e=>{
+      e.stopPropagation();
+      bm.closest('.card').classList.toggle('saved');
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>PIT·LANE — Ma Saison</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800;900&family=Barlow:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0A;
+    --card:#1A1A1A;
+    --ink:#F0EDE8;
+    --silver:#9A9A96;
+    --red:#E5001A;
+    --rule:rgba(240,237,232,.14);
+    --rule-strong:rgba(240,237,232,.28);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;border-radius:0 !important;}
+  html,body{background:var(--bg);color:var(--ink);font-family:"Barlow Condensed",sans-serif;-webkit-font-smoothing:antialiased;}
+  body{min-height:100vh;overflow-x:hidden;}
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace;letter-spacing:.02em;}
+  .upper{text-transform:uppercase;}
+
+  .page{max-width:1480px;margin:0 auto;padding:0 56px 80px;position:relative;}
+
+  /* ticks */
+  .ticks{position:fixed;inset:0;pointer-events:none;z-index:50;}
+  .ticks span{position:absolute;width:14px;height:14px;border:1px solid var(--rule-strong);}
+  .ticks .tl{top:18px;left:18px;border-right:none;border-bottom:none;}
+  .ticks .tr{top:18px;right:18px;border-left:none;border-bottom:none;}
+  .ticks .bl{bottom:18px;left:18px;border-right:none;border-top:none;}
+  .ticks .br{bottom:18px;right:18px;border-left:none;border-top:none;}
+
+  /* status */
+  .status{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--rule);font-size:11px;color:var(--silver);}
+  .status .live{color:var(--ink);display:inline-flex;align-items:center;gap:8px;}
+  .dot{width:6px;height:6px;background:var(--red);display:inline-block;animation:blink 1.4s infinite;}
+  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:.2}}
+
+  /* nav */
+  nav.bar{display:flex;justify-content:space-between;align-items:flex-end;padding:34px 0 22px;border-bottom:1px solid var(--rule);}
+  .logo{font-weight:900;font-size:34px;letter-spacing:.02em;line-height:1;transform:scaleX(.86);transform-origin:left center;display:inline-flex;align-items:center;}
+  .logo .sep{display:inline-block;width:6px;height:6px;background:var(--red);margin:0 4px 6px;}
+  .nav-links{display:flex;gap:42px;align-items:center;}
+  .nav-links a{color:var(--silver);text-decoration:none;font-family:"JetBrains Mono",monospace;font-weight:500;font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:6px 0;border-bottom:2px solid transparent;transition:color .15s;}
+  .nav-links a:hover{color:var(--ink);}
+  .nav-links a.active{color:var(--ink);border-bottom-color:var(--red);}
+  .nav-links .num{color:var(--red);margin-right:6px;}
+
+  /* breadcrumb */
+  .subbar{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--rule);font-size:11px;color:var(--silver);}
+  .subbar .crumbs span{color:var(--ink);}
+  .subbar .crumbs em{color:var(--red);font-style:normal;}
+
+  /* MASTHEAD */
+  .head{
+    display:flex;justify-content:space-between;align-items:flex-end;
+    padding:48px 0 28px;border-bottom:1px solid var(--rule);
+    position:relative;overflow:hidden;
+  }
+  .head .ghost{
+    position:absolute;right:-30px;top:46%;transform:translateY(-50%);
+    font-weight:900;font-size:300px;line-height:.8;letter-spacing:-.04em;
+    color:transparent;-webkit-text-stroke:1.5px rgba(229,0,26,.10);
+    pointer-events:none;user-select:none;
+  }
+  .head .left{position:relative;z-index:1;}
+  h1.title{font-weight:900;font-size:108px;line-height:.88;letter-spacing:-.015em;text-transform:uppercase;transform:scaleX(.94);transform-origin:left;}
+  h1.title .accent{color:var(--red);}
+  .sub{margin-top:14px;font-family:"JetBrains Mono",monospace;font-weight:700;font-size:12px;color:var(--red);text-transform:uppercase;letter-spacing:.22em;display:flex;align-items:center;gap:14px;}
+  .sub .silver{color:var(--silver);font-weight:500;letter-spacing:.16em;}
+
+  .head .right{position:relative;z-index:1;display:flex;align-items:center;gap:22px;}
+  .progress{
+    display:flex;flex-direction:column;align-items:flex-end;gap:8px;
+    min-width:280px;
+  }
+  .progress .lbl{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--silver);text-transform:uppercase;letter-spacing:.22em;display:flex;justify-content:space-between;width:100%;}
+  .progress .lbl b{color:var(--ink);font-weight:500;}
+  .progress .bar{width:100%;height:8px;border:1px solid var(--rule-strong);position:relative;}
+  .progress .bar::after{content:"";position:absolute;left:0;top:0;bottom:0;width:50%;background:var(--red);}
+  .progress .pct{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:11px;color:var(--red);letter-spacing:.18em;}
+
+  /* meta strip */
+  .metabar{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--rule);}
+  .metacell{padding:18px 22px;border-left:1px solid var(--rule);}
+  .metacell:first-child{border-left:none;}
+  .metacell .k{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--silver);text-transform:uppercase;letter-spacing:.22em;}
+  .metacell .v{font-weight:900;font-size:30px;line-height:1;text-transform:uppercase;margin-top:10px;}
+  .metacell .v .red{color:var(--red);}
+  .metacell .v .u{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--silver);text-transform:uppercase;letter-spacing:.18em;margin-left:8px;font-weight:500;}
+
+  /* FILTERS */
+  .filters{padding:24px 0 20px;border-bottom:1px solid var(--rule);display:grid;grid-template-columns:140px 1fr;gap:24px;align-items:center;}
+  .filt-label{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--silver);text-transform:uppercase;letter-spacing:.22em;}
+  .filt-label b{color:var(--ink);}
+  .pills{display:flex;gap:8px;flex-wrap:wrap;}
+  .pill{font-family:"JetBrains Mono",monospace;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.16em;padding:8px 14px;border:1px solid var(--rule-strong);color:var(--silver);cursor:pointer;background:transparent;transition:color .12s,background .12s,border-color .12s;display:inline-flex;align-items:center;gap:8px;}
+  .pill:hover{color:var(--ink);border-color:var(--ink);}
+  .pill .ct{color:var(--rule-strong);font-weight:400;}
+  .pill.active{background:var(--red);border-color:var(--red);color:#0A0A0A;font-weight:700;}
+  .pill.active .ct{color:rgba(10,10,10,.55);}
+
+  /* LOG TABLE */
+  .log-head{
+    display:grid;grid-template-columns:60px 1fr 180px 140px 140px;
+    align-items:flex-end;gap:18px;
+    padding:36px 6px 12px;border-bottom:1px solid var(--rule-strong);
+    font-family:"JetBrains Mono",monospace;font-size:10px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.22em;
+  }
+  .log-head h2{
+    font-family:"Barlow Condensed",sans-serif;font-weight:900;
+    font-size:28px;line-height:1;text-transform:uppercase;
+    color:var(--ink);grid-column:1 / span 2;letter-spacing:0;
+  }
+  .log-head h2 .num{color:var(--red);margin-right:10px;}
+  .log-head .c{align-self:end;}
+  .log-head .c.right{text-align:right;}
+
+  .log{display:flex;flex-direction:column;}
+  .row{
+    display:grid;grid-template-columns:60px 1fr 180px 140px 140px;
+    align-items:center;gap:18px;
+    padding:18px 6px;border-bottom:1px solid var(--rule);
+    cursor:pointer;
+    position:relative;
+    /* enter animation */
+    opacity:0;transform:translateY(6px);
+    transition:background .15s, opacity .5s ease-out, transform .5s ease-out;
+  }
+  .row.in{opacity:1;transform:translateY(0);}
+  .row:hover{background:rgba(240,237,232,.025);}
+  .row::before{
+    content:"";position:absolute;left:-56px;top:50%;width:18px;height:1px;background:var(--red);transform:translateY(-50%);opacity:0;transition:opacity .15s;
+  }
+  .row:hover::before{opacity:.6;}
+
+  .rn{
+    font-family:"JetBrains Mono",monospace;font-weight:700;font-size:34px;
+    color:var(--red);line-height:1;font-variant-numeric:tabular-nums;
+    letter-spacing:-.02em;
+  }
+
+  .gp-cell{display:flex;flex-direction:column;gap:6px;}
+  .gp-name{
+    font-weight:900;font-size:22px;line-height:1;text-transform:uppercase;
+    color:var(--ink);letter-spacing:-.005em;
+    display:flex;align-items:center;gap:10px;
+  }
+  .gp-name .flag{font-size:18px;line-height:1;}
+  .gp-circuit{
+    font-family:"JetBrains Mono",monospace;font-size:10px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.18em;
+  }
+  .gp-circuit .sep{color:var(--rule-strong);margin:0 6px;}
+
+  .date-cell{
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.14em;
+  }
+  .date-cell b{color:var(--ink);font-weight:500;}
+
+  .winner-cell{
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.14em;
+  }
+  .winner-cell b{color:var(--ink);font-weight:700;}
+
+  .status-cell{
+    justify-self:end;
+    font-family:"JetBrains Mono",monospace;font-weight:700;font-size:11px;
+    color:var(--red);text-transform:uppercase;letter-spacing:.2em;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .status-cell .tick{
+    display:inline-block;width:14px;height:14px;
+    border:1px solid var(--red);text-align:center;line-height:12px;
+    color:var(--red);font-size:10px;
+  }
+  .row.not-watched .status-cell{color:var(--silver);}
+  .row.not-watched .status-cell .tick{border-color:var(--rule-strong);color:transparent;}
+
+  .row.sprint .rn::after{
+    content:"S";display:inline-block;
+    font-size:10px;vertical-align:super;color:#0A0A0A;
+    background:var(--red);
+    padding:2px 4px;margin-left:6px;letter-spacing:.1em;
+    font-weight:700;line-height:1;
+  }
+
+  /* "no entries yet" — last upcoming rows */
+  .row.upcoming .gp-name{color:var(--silver);}
+  .row.upcoming .winner-cell b{color:var(--silver);}
+  .row.upcoming .rn{color:var(--silver);}
+  .row.upcoming .status-cell{color:var(--silver);}
+
+  /* foot */
+  .foot{margin-top:60px;padding-top:18px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--silver);text-transform:uppercase;letter-spacing:.2em;}
+  .foot .ver b{color:var(--ink);}
+
+  @media (max-width:960px){
+    h1.title{font-size:72px;}
+    .head{flex-direction:column;align-items:flex-start;gap:22px;}
+    .progress{align-items:flex-start;width:100%;}
+    .metabar{grid-template-columns:repeat(2,1fr);}
+    .metacell:nth-child(3),.metacell:nth-child(4){border-top:1px solid var(--rule);}
+    .metacell:nth-child(3){border-left:none;}
+    .log-head,.row{grid-template-columns:50px 1fr 110px;}
+    .log-head .c.winner,.log-head .c.date,.row .winner-cell,.row .date-cell{display:none;}
+    .filters{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+
+<div class="page">
+
+  <!-- status -->
+  <div class="status mono upper">
+    <div>FR · CET 14:42 — Profil · Saison 2026</div>
+    <div class="live"><span class="dot"></span>Journal personnel · 12 courses regardées</div>
+    <div>Synchronisé localement · 14 KB · 06:12 CET</div>
+  </div>
+
+  <!-- nav -->
+  <nav class="bar">
+    <div class="logo">PIT<span class="sep"></span>LANE</div>
+    <div class="nav-links">
+      <a href="Pitlane Hero.html"><span class="num">01</span>PADDOCK</a>
+      <a href="Pitlane Calendar.html"><span class="num">02</span>CALENDRIER</a>
+      <a href="Pitlane Garage.html"><span class="num">03</span>MON GARAGE</a>
+      <a href="#" class="active"><span class="num">04</span>MA SAISON</a>
+    </div>
+  </nav>
+
+  <!-- breadcrumb -->
+  <div class="subbar mono upper">
+    <div class="crumbs">Profil <em>/</em> <span>Ma Saison</span> <em>/</em> Journal des courses</div>
+    <div>Édition #248 · 11 Mai 2026</div>
+  </div>
+
+  <!-- masthead -->
+  <section class="head">
+    <div class="ghost">26</div>
+    <div class="left">
+      <h1 class="title">MA <span class="accent">SAISON</span></h1>
+      <div class="sub">
+        <span>12 COURSES REGARDÉES</span>
+        <span class="silver">· JOURNAL CHRONOLOGIQUE · SAISON 2026</span>
+      </div>
+    </div>
+    <div class="right">
+      <div class="progress">
+        <div class="lbl"><span>/ Progression saison</span><b>12 / 24</b></div>
+        <div class="bar"></div>
+        <div class="pct">50 % · MI-SAISON</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- meta strip -->
+  <section class="metabar">
+    <div class="metacell">
+      <div class="k">/ Courses regardées</div>
+      <div class="v"><span class="red">12</span><span class="u">/ 24</span></div>
+    </div>
+    <div class="metacell">
+      <div class="k">/ Sprints regardés</div>
+      <div class="v">04 <span class="u">/ 06</span></div>
+    </div>
+    <div class="metacell">
+      <div class="k">/ Pilote n°1 vu</div>
+      <div class="v">VER <span class="u">5 victoires</span></div>
+    </div>
+    <div class="metacell">
+      <div class="k">/ Pays visités</div>
+      <div class="v">11 <span class="u">11 fanions</span></div>
+    </div>
+  </section>
+
+  <!-- FILTERS -->
+  <section class="filters">
+    <div class="filt-label">/ Filtrer par <b>CONTINENT</b></div>
+    <div class="pills" id="continent">
+      <button class="pill active">Tous <span class="ct">12</span></button>
+      <button class="pill">Europe <span class="ct">04</span></button>
+      <button class="pill">Amériques <span class="ct">03</span></button>
+      <button class="pill">Asie-Pacifique <span class="ct">03</span></button>
+      <button class="pill">Moyen-Orient <span class="ct">02</span></button>
+    </div>
+  </section>
+
+  <section class="filters">
+    <div class="filt-label">/ Filtrer par <b>TYPE</b></div>
+    <div class="pills" id="type">
+      <button class="pill active">Tous <span class="ct">12</span></button>
+      <button class="pill">Sprint <span class="ct">04</span></button>
+      <button class="pill">Standard <span class="ct">08</span></button>
+      <button class="pill">Course de nuit <span class="ct">03</span></button>
+      <button class="pill">Circuit urbain <span class="ct">02</span></button>
+    </div>
+  </section>
+
+  <!-- LOG TABLE -->
+  <div class="log-head">
+    <h2><span class="num">§01</span>JOURNAL CHRONOLOGIQUE</h2>
+    <div class="c date">Dates</div>
+    <div class="c winner">Vainqueur</div>
+    <div class="c right">Statut</div>
+  </div>
+
+  <div class="log" id="log">
+
+    <article class="row sprint">
+      <div class="rn">01</div>
+      <div class="gp-cell">
+        <div class="gp-name"><span class="flag">🇦🇺</span>Grand Prix d'Australie</div>
+        <div class="gp-circuit">Albert Park · Melbourne <span class="sep">·</span> 58 T · 5.278 KM</div>
+      </div>
+      <div class="date-cell"><b>07</b> — 09 MAR</div>
+      <div class="winner-cell">P1 · <b>VERSTAPPEN</b></div>
+      <div class="status-cell"><span class="tick">✓</span>REGARDÉ</div>
+    </article>
+
+    <article class="row sprint">
+      <div class="rn">02</div>
+      <div class="gp-cell">
+        <div class="gp-name"><span class="flag">🇨🇳</span>Grand Prix de Chine</div>
+        <div class="gp-circuit">Shanghai Int'l Circuit <span class="sep">·</span> 56 T · 5.451 KM</div>
+      </div>
+      <div class="date-cell"><b>21</b> — 23 MAR</div>
+      <div class="winner-cell">P1 · <b>NORRIS</b></div>
+      <div class="status-cell"><span class="tick">✓</span>REGARDÉ</div>
+    </article>
+
+    <article class="row">
+      <div class="rn">03</div>
+      <div class="gp-cell">
+        <div class="gp-name"><span class="flag">🇯🇵</span>Grand Prix du Japon</div>
+        <div class="gp-circuit">Suzuka Int'l Racing Course <span class="sep">·</span> 53 T · 5.807 KM</div>
+      </div>
+      <div class="date-cell"><b>04</b> — 06 AVR</div>
+      <div class="winner-cell">P1 · <b>PIASTRI</b></div>
+      <div class="status-cell"><span class="tick">✓</span>REGARDÉ</div>
+    </article>
+
+    <article class="row">
+      <div class="rn">04</div>
+      <div class="gp-cell">
+        <div class="gp-name"><span class="flag">🇧🇭</span>Grand Prix de Bahreïn</div>
+        <div class="gp-circuit">Bahrain Int'l Circuit · Sakhir <span class="sep">·</span> 57 T · 5.412 KM</div>
+      </div>
+      <div class="date-cell"><b>11</b> — 13 AVR</div>
+      <div class="winner-cell">P1 · <b>LECLERC</b></div>
+      <div class="status-cell"><span class="tick">✓</span>REGARDÉ</div>
+    </article>
+
+    <article class="row">
+      <div class="rn">05</div>
+      <div class="gp-cell">
+        <div class="gp-name"><span class="flag">🇸🇦</span>Grand Prix d'Arabie Saoudite</div>
+        <div class="gp-circuit">Jeddah Corniche Circuit <span class="sep">·</span> 50 T · 6.174 KM</div>
+      </div>
+      <div class="date-cell"><b>18</b> — 20 AVR</div>
+      <div class="winner-cell">P1 · <b>VERSTAPPEN</b></div>
+      <div class="status-cell"><span class="tick">✓</span>REGARDÉ</div>
+    </article>
+
+    <article class="row sprint">
+      <div class="rn">06</div>
+      <div class="gp-cell">
+        <div class="gp-name"><span class="flag">🇺🇸</span>Grand Prix de Miami</div>
+        <div class="gp-circuit">Miami Int'l Autodrome · Hard Rock <span class="sep">·</span> 57 T · 5.412 KM</div>
+      </div>
+      <div class="date-cell"><b>02</b> — 04 MAI</div>
+      <div class="winner-cell">P1 · <b>NORRIS</b></div>
+      <div class="status-cell"><span class="tick">✓</span>REGARDÉ</div>
+    </article>
+
+    <article class="row not-watched">
+      <div class="rn">07</div>
+      <div class="gp-cell">
+        <div class="gp-name"><span class="flag">🇨🇦</span>Grand Prix du Canada</div>
+        <div class="gp-circuit">Circuit Gilles Villeneuve · Montréal <span class="sep">·</span> 70 T · 4.361 KM</div>
+      </div>
+      <div class="date-cell"><b>12</b> — 14 JUIN</div>
+      <div class="winner-cell">À VENIR</div>
+      <div class="status-cell"><span class="tick"> </span>NON VU</div>
+    </article>
+
+    <article class="row">
+      <div class="rn">08</div>
+      <div class="gp-cell">
+        <div class="gp-name"><span class="flag">🇪🇸</span>Grand Prix d'Espagne</div>
+        <div class="gp-circuit">Circuit de Barcelona-Catalunya <span class="sep">·</span> 66 T · 4.657 KM</div>
+      </div>
+      <div class="date-cell"><b>19</b> — 21 JUIN</div>
+      <div class="winner-cell">P1 · <b>RUSSELL</b></div>
+      <div class="status-cell"><span class="tick">✓</span>REGARDÉ</div>
+    </article>
+
+  </div>
+
+  <!-- foot -->
+  <div class="foot">
+    <div class="ver">PIT·LANE <b>v26.06.1</b> — Companion non officiel · Ma Saison · 12/24</div>
+    <div>Imprimé numériquement · Édition personnelle</div>
+  </div>
+
+</div>
+
+<script>
+  // staggered reveal
+  const rows = document.querySelectorAll('.row');
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const i = [...rows].indexOf(e.target);
+        setTimeout(()=>e.target.classList.add('in'), Math.min(i,8)*70);
+        obs.unobserve(e.target);
+      }
+    });
+  },{threshold:.15});
+  rows.forEach(r=>obs.observe(r));
+
+  // pills (single-select per row)
+  document.querySelectorAll('.pills').forEach(row=>{
+    row.addEventListener('click',e=>{
+      const btn=e.target.closest('.pill');if(!btn)return;
+      row.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

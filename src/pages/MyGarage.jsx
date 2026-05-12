@@ -1,142 +1,137 @@
-import { useRef, useState } from 'react';
+import { useRef, useLayoutEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import { Flip } from 'gsap/Flip';
 import gsap from 'gsap';
 import races from '../data/races.js';
 import { useLocalStorage } from '../hooks/useLocalStorage.js';
 import { FavoriteCard } from '../components/FavoriteCard.jsx';
-import { F1Car } from '../components/F1Car.jsx';
 import './MyGarage.css';
-
-const PRESET_COLORS = [
-  { name: 'Ferrari Red', primary: '#FF1801', accent: '#FFE800' },
-  { name: 'Mercedes Silver', primary: '#C0C0C0', accent: '#00D2BE' },
-  { name: 'Red Bull Blue', primary: '#0600EF', accent: '#CC0000' },
-  { name: 'McLaren Papaya', primary: '#FF8000', accent: '#47C7FC' },
-  { name: 'Aston Green', primary: '#006F62', accent: '#CEDC00' },
-  { name: 'Alpine Pink', primary: '#FF87BC', accent: '#0090FF' },
-];
 
 export const MyGarage = () => {
   const containerRef = useRef(null);
+  const cardRefs     = useRef([]);
   const flipStateRef = useRef(null);
 
   const [favorites, setFavorites] = useLocalStorage('pitlane_favorites', []);
-  const [carConfig, setCarConfig] = useLocalStorage('pitlane_car_config', PRESET_COLORS[0]);
 
   const favoriteRaces = favorites
     .map((id) => races.find((r) => r.id === id))
     .filter(Boolean)
     .sort((a, b) => a.round - b.round);
 
+  // STEP 1 — Flip snapshot before state update
   const handleRemove = (raceId) => {
-    // Step 1: capture positions before React touches the DOM
-    if (containerRef.current) {
-      flipStateRef.current = Flip.getState(
-        containerRef.current.querySelectorAll('[data-flip-id]')
-      );
-    }
-    // Step 2: trigger re-render
+    flipStateRef.current = Flip.getState(cardRefs.current.filter(Boolean));
     setFavorites((prev) => prev.filter((id) => id !== raceId));
   };
 
-  // GSAP entrance — runs once on mount
+  // STEP 2 — animate after DOM updates
+  useLayoutEffect(() => {
+    if (!flipStateRef.current) return;
+    Flip.from(flipStateRef.current, {
+      duration: 0.4,
+      ease: 'power2.inOut',
+      absolute: true,
+      onLeave: (els) =>
+        gsap.to(els, { opacity: 0, scale: 0.97, duration: 0.2 }),
+    });
+    flipStateRef.current = null;
+  }, [favorites]);
+
+  // entrance stagger
   useGSAP(() => {
-    if (!containerRef.current) return;
-    const mm = gsap.matchMedia();
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
-      gsap.from('.garage-customization', {
-        autoAlpha: 0,
-        y: -30,
-        duration: 0.6,
-        ease: 'power2.out',
-      });
-      gsap.from(Array.from(containerRef.current.children), {
-        autoAlpha: 0,
-        y: 30,
-        stagger: { each: 0.08 },
-        duration: 0.55,
-        ease: 'power2.out',
-      });
+    const cards = cardRefs.current.filter(Boolean);
+    if (!cards.length) return;
+    gsap.from(cards, {
+      opacity: 0, y: 16, stagger: 0.07, duration: 0.4, ease: 'power2.out',
     });
   }, { scope: containerRef });
 
-  // GSAP Flip — runs after every favorites change to animate removal
-  useGSAP(
-    () => {
-      if (!flipStateRef.current) return;
-      Flip.from(flipStateRef.current, {
-        duration: 0.45,
-        ease: 'power2.inOut',
-        absolute: true,
-        onLeave: (elements) =>
-          gsap.to(elements, {
-            opacity: 0,
-            scale: 0.75,
-            duration: 0.25,
-            ease: 'power2.in',
-          }),
-      });
-      flipStateRef.current = null;
-    },
-    { scope: containerRef, dependencies: [favorites] }
-  );
+  const count        = favoriteRaces.length;
+  const sprintCount  = favoriteRaces.filter((r) => r.isSprint).length;
+  const nextFav      = favoriteRaces[0];
 
-  const count = favoriteRaces.length;
+  cardRefs.current = [];
 
   return (
     <div className="page my-garage">
-      <h1 className="my-garage__title">Mon Garage</h1>
-      
-      {/* ── Car Customization Section ── */}
-      <div className="garage-customization">
-        <div className="garage-customization__showcase">
-          <F1Car 
-            isDriving={false} 
-            className="garage-showcase-car" 
-            primaryColor={carConfig.primary} 
-            accentColor={carConfig.accent} 
-          />
-        </div>
-        
-        <div className="garage-customization__controls">
-          <h2 className="controls-title">Personnaliser la monoplace</h2>
-          <div className="color-presets">
-            {PRESET_COLORS.map((preset) => (
-              <button
-                key={preset.name}
-                className={`color-btn ${carConfig.name === preset.name ? 'color-btn--active' : ''}`}
-                style={{ '--btn-primary': preset.primary, '--btn-accent': preset.accent }}
-                onClick={() => setCarConfig(preset)}
-                aria-label={`Sélectionner la couleur ${preset.name}`}
-                title={preset.name}
-              />
-            ))}
-          </div>
-          <p className="selected-color-name">{carConfig.name}</p>
-        </div>
+
+      {/* ── Breadcrumb ── */}
+      <div className="mg-subbar">
+        <span className="mg-subbar__crumbs">
+          Profil <em>/</em> <span>Mon Garage</span> <em>/</em> Courses sauvegardées
+        </span>
+        <span>Saison 2026</span>
       </div>
 
-      <div className="garage-divider"></div>
+      {/* ── Masthead ── */}
+      <section className="mg-head">
+        <div className="mg-head__ghost" aria-hidden="true">⚑</div>
+        <div className="mg-head__left">
+          <h1 className="mg-title">MON <span className="accent">GARAGE</span></h1>
+          <div className="mg-sub">
+            <span>{count} COURSE{count !== 1 ? 'S' : ''} SAUVEGARDÉE{count !== 1 ? 'S' : ''}</span>
+            <span className="silver">· FILTRE CHRONOLOGIQUE · PROCHAINE EN PREMIER</span>
+          </div>
+        </div>
+        {count > 0 && (
+          <div className="mg-head__right">
+            <button
+              className="mg-clear-link"
+              onClick={() => setFavorites([])}
+            >
+              <span className="mg-clear-x">✕</span>TOUT EFFACER
+            </button>
+          </div>
+        )}
+      </section>
 
-      {/* ── Favorites Section ── */}
-      <h2 className="my-garage__subtitle" style={{ margin: 0, fontSize: '18px' }}>
-        Mes Courses Favorites ({count})
-      </h2>
+      {/* ── Meta strip ── */}
+      <section className="mg-metabar">
+        <div className="mg-metacell">
+          <div className="mg-meta-k">/ Total suivies</div>
+          <div className="mg-meta-v"><span className="red">{String(count).padStart(2,'0')}</span><span className="sub">/ 24</span></div>
+        </div>
+        <div className="mg-metacell">
+          <div className="mg-meta-k">/ Prochaine course</div>
+          <div className="mg-meta-v">{nextFav ? nextFav.country.slice(0,3).toUpperCase() : '—'}</div>
+        </div>
+        <div className="mg-metacell">
+          <div className="mg-meta-k">/ Sprints suivis</div>
+          <div className="mg-meta-v">{String(sprintCount).padStart(2,'0')}<span className="sub">/ 06</span></div>
+        </div>
+        <div className="mg-metacell">
+          <div className="mg-meta-k">/ Temps de course</div>
+          <div className="mg-meta-v">~{Math.round(count * 1.6)}H<span className="sub">estimé</span></div>
+        </div>
+      </section>
+
+      {/* ── Section header ── */}
+      <div className="sec-head">
+        <h2><span className="num">§01</span>COURSES SUIVIES</h2>
+        <span className="meta-right">Affichées · <b style={{ color: 'var(--text)' }}>{count}</b></span>
+      </div>
 
       {count === 0 ? (
-        <div className="garage-empty">
-          <p>
-            Aucune course en favori — ajoute des étoiles depuis le calendrier ★
-          </p>
+        /* empty state */
+        <div className="mg-empty">
+          <div className="mg-empty__corners">
+            <span className="etl" /><span className="etr" /><span className="ebl" /><span className="ebr" />
+          </div>
+          <span className="mg-empty__glyph" aria-hidden="true">⚑</span>
+          <div className="mg-empty__title">VOTRE GARAGE EST VIDE</div>
+          <div className="mg-empty__sub">Marquez des courses depuis le Calendrier</div>
+          <Link to="/calendrier" className="mg-empty__cta">→ OUVRIR LE CALENDRIER</Link>
         </div>
       ) : (
         <div className="garage-grid" ref={containerRef}>
-          {favoriteRaces.map((race) => (
+          {favoriteRaces.map((race, i) => (
             <FavoriteCard
               key={race.id}
               race={race}
               onRemove={handleRemove}
+              ref={(el) => { cardRefs.current[i] = el; }}
             />
           ))}
         </div>

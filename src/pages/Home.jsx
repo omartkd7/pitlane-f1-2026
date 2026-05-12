@@ -12,23 +12,20 @@ const flagEmoji = (code) =>
     .map((c) => String.fromCodePoint(0x1f1e6 + c.charCodeAt(0) - 65))
     .join('');
 
-const fmtDate = (iso) => {
+const fmtShort = (iso) => {
   const [y, m, d] = iso.split('-').map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
+  return new Date(y, m - 1, d)
+    .toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+    .toUpperCase();
 };
 
 const getCountdown = (dateStart) => {
   const target = new Date(`${dateStart}T00:00:00Z`);
-  const diff = target - Date.now();
-  if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
+  const diff = Math.max(0, target - Date.now());
   const s = Math.floor(diff / 1000);
   return {
-    days: Math.floor(s / 86400),
-    hours: Math.floor((s % 86400) / 3600),
+    days:    Math.floor(s / 86400),
+    hours:   Math.floor((s % 86400) / 3600),
     minutes: Math.floor((s % 3600) / 60),
     seconds: s % 60,
   };
@@ -36,12 +33,22 @@ const getCountdown = (dateStart) => {
 
 const pad = (n) => String(n).padStart(2, '0');
 
+// Split "Grand Prix de Monaco" → ["GRAND PRIX", "DE MONACO"]
+const splitGPName = (name) => {
+  const upper = name.toUpperCase();
+  const idx = upper.indexOf(' ', 6); // skip "GRAND "
+  if (idx === -1) return ['GRAND PRIX', upper];
+  return ['GRAND PRIX', upper.slice(idx + 1)];
+};
+
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export const Home = () => {
-  const pageRef = useRef(null);
+  const heroRef      = useRef(null);
+  const cdRef        = useRef(null);
+  const cardRef      = useRef(null);
 
-  const today = useMemo(() => new Date().toISOString().split('T')[0], []);
+  const today    = useMemo(() => new Date().toISOString().split('T')[0], []);
   const nextRace = useMemo(() => races.find((r) => r.dateStart > today), [today]);
 
   const [countdown, setCountdown] = useState(
@@ -50,27 +57,45 @@ export const Home = () => {
 
   useEffect(() => {
     if (!nextRace) return;
-    const id = setInterval(
-      () => setCountdown(getCountdown(nextRace.dateStart)),
-      1000
-    );
+    const id = setInterval(() => setCountdown(getCountdown(nextRace.dateStart)), 1000);
     return () => clearInterval(id);
   }, [nextRace]);
 
-  // GSAP entrance — coordinated timeline: eyebrow → flag → name → meta → countdown → card
+  // hero entrance — stagger children, no glow
   useGSAP(() => {
-    if (!pageRef.current) return;
-    const mm = gsap.matchMedia();
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
-      const tl = gsap.timeline({ defaults: { ease: 'power2.out' } });
-      tl.from('.hero__eyebrow',   { autoAlpha: 0, y: 20, duration: 0.35 })
-        .from('.hero__flag',      { autoAlpha: 0, scale: 0.8, duration: 0.4, ease: 'back.out(1.7)' }, '-=0.15')
-        .from('.hero__race-name', { autoAlpha: 0, y: 25, duration: 0.45 }, '-=0.2')
-        .from('.hero__meta-item', { autoAlpha: 0, y: 15, stagger: 0.06, duration: 0.4 }, '-=0.2')
-        .from('.countdown__unit', { autoAlpha: 0, y: 20, scale: 0.85, stagger: 0.08, duration: 0.45, ease: 'back.out(1.7)' }, '-=0.1')
-        .from('.feature-card',    { autoAlpha: 0, y: 30, duration: 0.5 }, '-=0.1');
+    if (!heroRef.current) return;
+    gsap.from(heroRef.current.querySelector('.hero__inner').children, {
+      opacity: 0,
+      y: 18,
+      duration: 0.55,
+      stagger: 0.1,
+      ease: 'power2.out',
     });
-  }, { scope: pageRef });
+  }, { scope: heroRef });
+
+  // countdown seconds tick — subtle scale on the seconds number
+  useGSAP(() => {
+    if (!cdRef.current) return;
+    const secNum = cdRef.current.querySelector('.cd-block--sec .cd-num');
+    if (!secNum) return;
+    gsap.fromTo(
+      secNum,
+      { opacity: 0.5, scaleY: 0.85 },
+      { opacity: 1, scaleY: 1, duration: 0.12, ease: 'power2.out', transformOrigin: 'bottom' }
+    );
+  }, { scope: cdRef, dependencies: [countdown?.seconds] });
+
+  // feature card scroll reveal
+  useGSAP(() => {
+    if (!cardRef.current) return;
+    gsap.from(cardRef.current, {
+      opacity: 0,
+      y: 20,
+      duration: 0.5,
+      ease: 'power2.out',
+      scrollTrigger: { trigger: cardRef.current, start: 'top 88%' },
+    });
+  });
 
   if (!nextRace) {
     return (
@@ -83,96 +108,133 @@ export const Home = () => {
     );
   }
 
-  const countdownUnits = [
-    { value: countdown.days, label: 'Jours' },
-    { value: countdown.hours, label: 'Heures' },
-    { value: countdown.minutes, label: 'Min' },
-    { value: countdown.seconds, label: 'Sec' },
+  const [line1, line2] = splitGPName(nextRace.name);
+  const totalDistance  = (nextRace.laps * nextRace.circuitLengthKm).toFixed(1);
+
+  const cdUnits = [
+    { value: countdown.days,    label: 'Jours',    id: 'D' },
+    { value: countdown.hours,   label: 'Heures',   id: 'H' },
+    { value: countdown.minutes, label: 'Minutes',  id: 'M' },
+    { value: countdown.seconds, label: 'Secondes', id: 'S', isSec: true },
   ];
 
-  const totalDistance = (nextRace.laps * nextRace.circuitLengthKm).toFixed(1);
-
   return (
-    <div className="page home" ref={pageRef}>
+    <div className="page home">
+
+      {/* ── Breadcrumb ── */}
+      <div className="subbar">
+        <span className="subbar__crumbs">
+          Paddock <em>/</em> <span>Manche en cours</span> <em>/</em> Aperçu
+        </span>
+        <span>Saison 2026 · {nextRace.round} / 24 manches</span>
+      </div>
 
       {/* ── Hero ── */}
-      <section className="hero">
-        <p className="hero__eyebrow">Prochain Grand Prix</p>
-
-        <span className="hero__flag" aria-hidden="true">
-          {flagEmoji(nextRace.countryCode)}
-        </span>
-
-        <h1 className="hero__race-name">{nextRace.name}</h1>
-
-        <div className="hero__meta">
-          <div className="hero__meta-item">
-            <span className="hero__meta-label">Circuit</span>
-            <span className="hero__meta-value">{nextRace.circuit}</span>
-          </div>
-          <div className="hero__meta-item">
-            <span className="hero__meta-label">Lieu</span>
-            <span className="hero__meta-value">
-              {nextRace.city}, {nextRace.country}
-            </span>
-          </div>
-          <div className="hero__meta-item">
-            <span className="hero__meta-label">Round</span>
-            <span className="hero__meta-value">{nextRace.round} / 24</span>
-          </div>
-          <div className="hero__meta-item">
-            <span className="hero__meta-label">Dates</span>
-            <span className="hero__meta-value">
-              {fmtDate(nextRace.dateStart)} – {fmtDate(nextRace.dateEnd)}
-            </span>
-          </div>
+      <section className="hero" ref={heroRef}>
+        <div className="hero__ghost" aria-hidden="true">
+          {String(nextRace.round).padStart(2, '0')}
         </div>
 
-        <div className="countdown" aria-live="polite">
-          {countdownUnits.map(({ value, label }) => (
-            <div key={label} className="countdown__unit">
-              <span className="countdown__value">{pad(value)}</span>
-              <span className="countdown__label">{label}</span>
+        <div className="hero__inner">
+          <div className="hero__eyebrow">
+            <span className="hero__pill hero__pill--accent">▶ EN DIRECT</span>
+            <span className="hero__pill">Round {nextRace.round} / 24</span>
+            <span className="hero__eyebrow-bar" />
+            <span>Prochain Grand Prix · 2026</span>
+          </div>
+
+          <h1 className="hero__title">
+            {line1}
+            <span className="hero__title-line2">{line2}</span>
+          </h1>
+
+          <div className="hero__meta">
+            <span>Round {nextRace.round}</span>
+            <span className="sep">·</span>
+            <span className="strong">{nextRace.circuit}</span>
+            <span className="sep">·</span>
+            <span>{nextRace.city}</span>
+            <span className="flag">{flagEmoji(nextRace.countryCode)}</span>
+            <span className="sep">·</span>
+            <span>{fmtShort(nextRace.dateStart)} — {fmtShort(nextRace.dateEnd)}</span>
+          </div>
+
+          <div className="hero__telemetry">
+            <h4 className="hero__tele-head">Aperçu Circuit</h4>
+            <div className="hero__tele-grid">
+              <div><span>Tours</span><b>{nextRace.laps}</b></div>
+              <div><span>Longueur</span><b>{nextRace.circuitLengthKm} KM</b></div>
+              <div><span>Distance</span><b>{totalDistance} KM</b></div>
+              {nextRace.isSprint && <div><span>Format</span><b className="red">SPRINT</b></div>}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Countdown ── */}
+      <section className="countdown-wrap" ref={cdRef}>
+        <div className="cd-label">
+          <div className="cd-tag">/ Compte à rebours · Course</div>
+          <div className="cd-title">DÉPART<br /><em>EN…</em></div>
+        </div>
+        <div className="cd-blocks">
+          {cdUnits.map(({ value, label, id, isSec }) => (
+            <div key={id} className={`cd-block${isSec ? ' cd-block--sec' : ''}`}>
+              <div className="cd-num">{pad(value)}</div>
+              <div className="cd-lbl">
+                <span>{label}</span>
+                <span className="cd-idx">{id}</span>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
+      {/* ── Section header ── */}
+      <div className="sec-head">
+        <h2><span className="num">§01</span>COURSE À LA UNE</h2>
+        <span className="meta-right">Mise à jour · Saison 2026</span>
+      </div>
+
       {/* ── Feature card ── */}
-      <section className="feature-card">
-        <p className="feature-card__eyebrow">Course à la une</p>
-        <p className="feature-card__circuit">{nextRace.circuit}</p>
+      <article className="feature" ref={cardRef}>
+        <span className="feature__ghost" aria-hidden="true">
+          {String(nextRace.round).padStart(2, '0')}
+        </span>
 
-        <div className="feature-card__stats">
-          <div className="feature-card__stat">
-            <span className="feature-card__stat-label">Tours</span>
-            <span className="feature-card__stat-value">{nextRace.laps}</span>
+        <div className="feature__main">
+          <div className="feature__tag">
+            <span className="feature__round">ROUND {String(nextRace.round).padStart(2,'0')} / 24</span>
+            <span>· {fmtShort(nextRace.dateStart)} — {fmtShort(nextRace.dateEnd)}</span>
+            {nextRace.isSprint && <span className="feature__sprint">SPRINT</span>}
+            {nextRace.isNewCircuit && <span className="feature__new">NOUVEAU</span>}
           </div>
-          <div className="feature-card__stat">
-            <span className="feature-card__stat-label">Longueur</span>
-            <span className="feature-card__stat-value">
-              {nextRace.circuitLengthKm} km
-            </span>
-          </div>
-          <div className="feature-card__stat">
-            <span className="feature-card__stat-label">Distance totale</span>
-            <span className="feature-card__stat-value">≈ {totalDistance} km</span>
+
+          <h3 className="feature__title">{nextRace.name}</h3>
+
+          <div className="feature__circuit">
+            <span className="flag">{flagEmoji(nextRace.countryCode)}</span>
+            <span className="strong">{nextRace.circuit}</span>
+            <span className="sep">·</span>
+            <span>{nextRace.city}, {nextRace.country}</span>
           </div>
         </div>
 
-        <div className="badges">
-          {nextRace.isSprint && (
-            <span className="badge badge--sprint">Sprint</span>
-          )}
-          {nextRace.isNewCircuit && (
-            <span className="badge badge--new">Nouveau circuit</span>
-          )}
+        <div className="feature__side">
+          <div className="feature__stat">
+            <div className="k">Tours</div>
+            <div className="v">{nextRace.laps}</div>
+          </div>
+          <div className="feature__stat">
+            <div className="k">Longueur circuit</div>
+            <div className="v">{nextRace.circuitLengthKm} KM</div>
+          </div>
+          <Link to={`/calendrier/${nextRace.id}`} className="feature__cta">
+            <span>Ouvrir le dossier course</span>
+            <span className="arrow">→ {String(nextRace.round).padStart(2,'0')} / 24</span>
+          </Link>
         </div>
-
-        <Link to={`/calendrier/${nextRace.id}`} className="feature-card__link">
-          Voir les détails →
-        </Link>
-      </section>
+      </article>
 
     </div>
   );

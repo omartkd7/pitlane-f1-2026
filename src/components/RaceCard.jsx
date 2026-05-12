@@ -8,10 +8,9 @@ const flagEmoji = (code) =>
 
 const fmtDate = (iso) => {
   const [y, m, d] = iso.split('-').map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString('fr-FR', {
-    day: 'numeric',
-    month: 'short',
-  });
+  return new Date(y, m - 1, d)
+    .toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+    .toUpperCase();
 };
 
 export const RaceCard = forwardRef(({ race }, ref) => (
@@ -22,15 +21,11 @@ export const RaceCard = forwardRef(({ race }, ref) => (
 
     <div className="race-card__top">
       <span className="race-card__round">
-        Round {String(race.round).padStart(2, '0')}
+        R {String(race.round).padStart(2, '0')}<span className="of"> / 24</span>
       </span>
       <div className="race-card__badges">
-        {race.isSprint && (
-          <span className="race-card__badge race-card__badge--sprint">Sprint</span>
-        )}
-        {race.isNewCircuit && (
-          <span className="race-card__badge race-card__badge--new">New</span>
-        )}
+        {race.isSprint     && <span className="badge badge--sprint">SPRINT</span>}
+        {race.isNewCircuit && <span className="badge badge--new">NOUVEAU</span>}
       </div>
     </div>
 
@@ -44,7 +39,7 @@ export const RaceCard = forwardRef(({ race }, ref) => (
         {flagEmoji(race.countryCode)}
       </span>
       <span className="race-card__dates">
-        {fmtDate(race.dateStart)} – {fmtDate(race.dateEnd)}
+        <b>{fmtDate(race.dateStart)}</b> — {fmtDate(race.dateEnd)}
       </span>
     </div>
   </article>

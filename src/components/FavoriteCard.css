@@ -1,144 +1,127 @@
-/* ─── Card shell ──────────────────────────────────────────── */
-.favorite-card {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  border-left: 4px solid var(--red);
-  padding: 1.75rem;
+/* ─── Card shell ─────────────────────────────────────────── */
+.fav-card {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--red);
+  padding: 22px 24px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 1.5rem;
-  box-sizing: border-box;
+  min-height: 200px;
+  cursor: pointer;
   position: relative;
   overflow: hidden;
-  will-change: transform;
-  min-height: 200px;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
+  transition: border-color .15s;
+}
+.fav-card:hover {
+  border-color: var(--rule-strong);
+  border-left-color: var(--red);
 }
 
-.favorite-card:hover {
-  background: rgba(30, 30, 30, 0.8);
-  transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(255, 24, 1, 0.15);
-  border-color: rgba(255, 255, 255, 0.15);
-}
-
-/* ─── Ghost number ────────────────────────────────────────── */
-.favorite-card__ghost {
+/* ghost round number */
+.fav-card__ghost {
   position: absolute;
-  top: -15px;
-  right: -5px;
+  right: -26px;
+  bottom: -66px;
   font-family: var(--font-heading);
-  font-size: 130px;
   font-weight: 900;
-  color: rgba(255, 255, 255, 0.03);
-  line-height: 1;
+  font-size: 280px;
+  line-height: .8;
+  letter-spacing: -.05em;
+  color: rgba(240,237,232,.04);
   pointer-events: none;
   user-select: none;
   z-index: 0;
-  transition: color 0.3s ease;
 }
 
-.favorite-card:hover .favorite-card__ghost {
-  color: rgba(255, 255, 255, 0.06);
-}
-
-/* ─── Top section ─────────────────────────────────────────── */
-.favorite-card__top {
+/* ─── Top: round + badges ────────────────────────────────── */
+.fav-card__top {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 1rem;
   position: relative;
   z-index: 1;
 }
-
-.favorite-card__round {
+.fav-card__round {
   font-family: var(--font-mono);
-  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.15em;
+  font-size: 11px;
+  letter-spacing: .22em;
   text-transform: uppercase;
   color: var(--red);
-  margin: 0 0 6px;
-  text-shadow: 0 0 10px var(--red-glow);
 }
-
-.favorite-card__name {
-  font-family: var(--font-heading);
-  font-size: 1.8rem;
-  font-weight: 900;
-  line-height: 1.1;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  color: var(--text);
-  margin: 0;
-  transition: color 0.2s;
-}
-
-.favorite-card:hover .favorite-card__name {
-  color: var(--cyan);
-}
-
-.favorite-card__circuit {
-  font-family: var(--font-mono);
-  font-size: 11px;
+.fav-card__round .of {
   color: var(--silver);
-  margin: 6px 0 0;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
+  font-weight: 400;
 }
-
-.favorite-card__flag {
-  font-size: 2rem;
-  line-height: 1;
-  flex-shrink: 0;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
-}
-
-/* ─── Footer: date + remove ───────────────────────────────── */
-.favorite-card__footer {
+.fav-card__badges {
   display: flex;
-  justify-content: space-between;
+  gap: 6px;
   align-items: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  padding-top: 1rem;
+}
+
+/* bookmark remove button */
+.fav-bookmark {
+  width: 14px;
+  height: 18px;
+  background: var(--red);
+  border: none;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  transition: background .15s;
+}
+.fav-bookmark::after {
+  content: '';
+  position: absolute;
+  left: -1px;
+  right: -1px;
+  bottom: -7px;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 7px solid var(--surface);
+}
+.fav-bookmark:hover { background: #ff1a35; }
+
+/* ─── Mid: name + circuit ────────────────────────────────── */
+.fav-card__mid {
   position: relative;
   z-index: 1;
+  margin: 18px 0 16px;
 }
-
-.favorite-card__date {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+.fav-card__name {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: 36px;
+  line-height: .94;
   text-transform: uppercase;
-  color: var(--silver);
+  letter-spacing: -.005em;
+  color: var(--text);
   margin: 0;
 }
-
-.favorite-card__remove {
+.fav-card__circuit {
   font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-size: 11px;
+  color: var(--silver);
+  margin-top: 8px;
   text-transform: uppercase;
-  padding: 6px 12px;
-  border: 1px solid rgba(255, 24, 1, 0.4);
-  background: transparent;
-  color: rgba(255, 24, 1, 0.8);
-  cursor: pointer;
-  border-radius: 4px;
-  transition: all 0.2s ease;
+  letter-spacing: .1em;
 }
 
-.favorite-card__remove:hover {
-  background: var(--red);
-  border-color: var(--red);
-  color: var(--text);
-  box-shadow: 0 4px 15px var(--red-glow);
+/* ─── Footer ─────────────────────────────────────────────── */
+.fav-card__footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--silver);
+  text-transform: uppercase;
+  letter-spacing: .1em;
 }
+.fav-card__flag  { font-size: 20px; line-height: 1; }
+.fav-card__dates b { color: var(--text); font-weight: 500; }

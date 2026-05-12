@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<title>PIT·LANE — Grand Prix de Monaco</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800;900&family=Barlow:wght@400;500&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0A0A;
+    --card:#1A1A1A;
+    --ink:#F0EDE8;
+    --silver:#9A9A96;
+    --red:#E5001A;
+    --rule:rgba(240,237,232,.14);
+    --rule-strong:rgba(240,237,232,.28);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;border-radius:0 !important;}
+  html,body{background:var(--bg);color:var(--ink);font-family:"Barlow Condensed",sans-serif;-webkit-font-smoothing:antialiased;}
+  body{min-height:100vh;overflow-x:hidden;}
+  .mono{font-family:"JetBrains Mono",ui-monospace,monospace;letter-spacing:.02em;}
+  .upper{text-transform:uppercase;}
+  .body{font-family:"Barlow",sans-serif;font-weight:400;}
+
+  .page{max-width:1480px;margin:0 auto;padding:0 56px 80px;position:relative;}
+
+  /* ticks */
+  .ticks{position:fixed;inset:0;pointer-events:none;z-index:50;}
+  .ticks span{position:absolute;width:14px;height:14px;border:1px solid var(--rule-strong);}
+  .ticks .tl{top:18px;left:18px;border-right:none;border-bottom:none;}
+  .ticks .tr{top:18px;right:18px;border-left:none;border-bottom:none;}
+  .ticks .bl{bottom:18px;left:18px;border-right:none;border-top:none;}
+  .ticks .br{bottom:18px;right:18px;border-left:none;border-top:none;}
+
+  /* status */
+  .status{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid var(--rule);font-size:11px;color:var(--silver);}
+  .status .live{color:var(--ink);display:inline-flex;align-items:center;gap:8px;}
+  .dot{width:6px;height:6px;background:var(--red);display:inline-block;animation:blink 1.4s infinite;}
+  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:.2}}
+
+  /* nav */
+  nav.bar{display:flex;justify-content:space-between;align-items:flex-end;padding:34px 0 22px;border-bottom:1px solid var(--rule);}
+  .logo{font-weight:900;font-size:34px;letter-spacing:.02em;line-height:1;transform:scaleX(.86);transform-origin:left center;display:inline-flex;align-items:center;}
+  .logo .sep{display:inline-block;width:6px;height:6px;background:var(--red);margin:0 4px 6px;}
+  .nav-links{display:flex;gap:42px;align-items:center;}
+  .nav-links a{color:var(--silver);text-decoration:none;font-family:"JetBrains Mono",monospace;font-weight:500;font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:6px 0;border-bottom:2px solid transparent;transition:color .15s;}
+  .nav-links a:hover{color:var(--ink);}
+  .nav-links a.active{color:var(--ink);border-bottom-color:var(--red);}
+  .nav-links .num{color:var(--red);margin-right:6px;}
+
+  /* breadcrumb */
+  .subbar{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--rule);font-size:11px;color:var(--silver);}
+  .subbar .crumbs span{color:var(--ink);}
+  .subbar .crumbs em{color:var(--red);font-style:normal;}
+  .subbar .back{color:var(--ink);}
+  .subbar .back .arr{color:var(--red);margin-right:8px;}
+
+  /* HERO */
+  .hero{
+    position:relative;overflow:hidden;
+    padding:84px 0 56px;
+    border-bottom:1px solid var(--rule);
+  }
+  .hero .ghost{
+    position:absolute;right:-60px;top:50%;transform:translateY(-52%);
+    font-weight:900;font-size:780px;line-height:.78;letter-spacing:-.05em;
+    color:rgba(229,0,26,.06);
+    pointer-events:none;user-select:none;
+    text-transform:uppercase;
+  }
+  .hero-inner{position:relative;z-index:1;}
+  .round-line{
+    display:flex;align-items:center;gap:18px;
+    font-family:"JetBrains Mono",monospace;font-size:12px;
+    color:var(--red);text-transform:uppercase;letter-spacing:.24em;font-weight:700;
+    margin-bottom:32px;
+  }
+  .round-line .silver{color:var(--silver);font-weight:500;letter-spacing:.18em;}
+  .round-line .tick{flex:1;height:1px;background:rgba(229,0,26,.4);max-width:140px;}
+
+  h1.gp{
+    font-weight:900;
+    font-size:148px;line-height:.88;letter-spacing:-.015em;text-transform:uppercase;
+    transform:scaleX(.94);transform-origin:left;
+    margin-bottom:22px;
+  }
+  h1.gp .accent{color:var(--red);}
+
+  .hero-meta{
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+    font-family:"JetBrains Mono",monospace;font-size:14px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.08em;
+  }
+  .hero-meta .flag{font-size:24px;line-height:1;}
+  .hero-meta .strong{color:var(--ink);}
+  .hero-meta .sep{color:var(--rule-strong);}
+  .hero-meta .date{
+    border:1px solid var(--rule-strong);
+    padding:5px 12px;color:var(--ink);
+  }
+
+  .hero-rule{height:1px;background:transparent;border-top:1px solid var(--red);margin:48px 0 0;position:relative;z-index:1;}
+
+  /* STATS */
+  .stats{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    border-bottom:1px solid var(--rule);
+  }
+  .stat{
+    padding:46px 36px 38px;
+    border-left:1px solid var(--rule);
+    position:relative;
+  }
+  .stat:first-child{border-left:none;}
+  .stat .k{
+    font-family:"JetBrains Mono",monospace;font-size:10px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.24em;
+    margin-bottom:24px;
+    display:flex;justify-content:space-between;
+  }
+  .stat .k .idx{color:var(--rule-strong);}
+  .stat .v{
+    display:flex;align-items:baseline;gap:14px;
+    font-family:"JetBrains Mono",monospace;font-weight:700;
+    font-size:96px;line-height:.9;letter-spacing:-.04em;
+    color:var(--ink);font-variant-numeric:tabular-nums;
+  }
+  .stat .v .u{
+    font-size:18px;font-weight:500;color:var(--silver);letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+  .stat .desc{
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.18em;
+    margin-top:18px;
+  }
+  .stat .desc b{color:var(--ink);font-weight:500;}
+
+  /* CONTENT */
+  .content{
+    display:grid;grid-template-columns:1fr 360px;gap:48px;
+    padding:56px 0 24px;border-bottom:1px solid var(--rule);
+  }
+
+  .desc-block .kicker{
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.22em;
+    padding-bottom:14px;border-bottom:1px solid var(--rule);
+    display:flex;justify-content:space-between;align-items:baseline;
+  }
+  .desc-block .kicker b{color:var(--red);font-weight:500;}
+  .desc-block .lede{
+    font-family:"Barlow",sans-serif;font-weight:400;
+    font-size:14px;line-height:1.65;color:#C9C6C0;
+    margin-top:20px;max-width:62ch;
+    text-wrap:pretty;
+  }
+  .desc-block .lede strong{color:var(--ink);font-weight:500;}
+  .desc-block .lede em{font-style:normal;color:var(--red);}
+
+  .factsheet{
+    border:1px solid var(--rule);
+    align-self:start;
+  }
+  .factsheet h4{
+    font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:500;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.22em;
+    padding:14px 18px;border-bottom:1px solid var(--rule);
+    display:flex;justify-content:space-between;
+  }
+  .factsheet h4 b{color:var(--red);font-weight:500;}
+  .factsheet .row{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:12px 18px;border-bottom:1px solid var(--rule);
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.1em;
+  }
+  .factsheet .row:last-child{border-bottom:none;}
+  .factsheet .row b{color:var(--ink);font-weight:500;}
+  .factsheet .row .red{color:var(--red);font-weight:700;}
+
+  /* TYPE row */
+  .type-row{
+    display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:center;
+    padding:26px 0;border-bottom:1px solid var(--rule);
+  }
+  .type-row .lbl{
+    font-family:"JetBrains Mono",monospace;font-size:10px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.22em;
+  }
+  .type-row .lbl b{color:var(--ink);}
+  .tags{display:flex;gap:10px;flex-wrap:wrap;}
+  .tag{
+    font-family:"JetBrains Mono",monospace;font-weight:700;font-size:11px;
+    text-transform:uppercase;letter-spacing:.2em;
+    padding:8px 14px;line-height:1;
+  }
+  .tag.outline-red{border:1px solid var(--red);color:var(--red);}
+  .tag.solid-red{background:var(--red);color:#0A0A0A;}
+  .tag.outline-ink{border:1px solid var(--rule-strong);color:var(--silver);}
+
+  /* SESSIONS strip */
+  .sessions{
+    display:grid;grid-template-columns:repeat(5,1fr);
+    border-bottom:1px solid var(--rule);
+  }
+  .ses{
+    padding:22px 22px 20px;border-left:1px solid var(--rule);
+    position:relative;
+  }
+  .ses:first-child{border-left:none;}
+  .ses .d{
+    font-family:"JetBrains Mono",monospace;font-size:10px;
+    color:var(--silver);text-transform:uppercase;letter-spacing:.24em;
+  }
+  .ses .name{
+    font-weight:900;font-size:28px;line-height:1;text-transform:uppercase;margin-top:10px;
+  }
+  .ses .t{
+    font-family:"JetBrains Mono",monospace;font-size:11px;
+    color:var(--silver);margin-top:8px;letter-spacing:.06em;
+  }
+  .ses.race .name{color:var(--red);}
+  .ses.race::after{
+    content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:var(--red);
+  }
+
+  /* CTA row */
+  .cta-row{
+    display:grid;grid-template-columns:2.2fr 1fr;gap:14px;
+    padding:36px 0 0;
+  }
+  .btn{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:24px 28px;cursor:pointer;
+    font-weight:900;font-size:24px;text-transform:uppercase;letter-spacing:.02em;
+    line-height:1;
+    transition:opacity .15s,background .15s,color .15s;
+    border:none;
+  }
+  .btn .glyph{font-family:"JetBrains Mono",monospace;font-weight:700;font-size:20px;letter-spacing:0;}
+  .btn-primary{background:var(--red);color:#0A0A0A;}
+  .btn-primary:hover{background:#FF1A35;}
+  .btn-primary.saved{background:transparent;border:1px solid var(--red);color:var(--red);}
+  .btn-ghost{background:transparent;border:1px solid var(--rule-strong);color:var(--ink);}
+  .btn-ghost:hover{border-color:var(--ink);}
+  .btn-ghost.checked{border-color:var(--red);color:var(--red);}
+  .btn-ghost.checked .glyph{color:var(--red);}
+
+  /* foot */
+  .foot{margin-top:60px;padding-top:18px;border-top:1px solid var(--rule);display:flex;justify-content:space-between;font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--silver);text-transform:uppercase;letter-spacing:.2em;}
+  .foot .ver b{color:var(--ink);}
+
+  @media (max-width:1180px){
+    h1.gp{font-size:96px;}
+    .hero .ghost{font-size:480px;}
+    .stats{grid-template-columns:1fr;}
+    .stat{border-left:none;border-top:1px solid var(--rule);}
+    .stat:first-child{border-top:none;}
+    .content{grid-template-columns:1fr;}
+    .cta-row{grid-template-columns:1fr;}
+    .sessions{grid-template-columns:repeat(2,1fr);}
+    .ses{border-top:1px solid var(--rule);}
+  }
+</style>
+</head>
+<body>
+
+<div class="ticks"><span class="tl"></span><span class="tr"></span><span class="bl"></span><span class="br"></span></div>
+
+<div class="page">
+
+  <!-- status -->
+  <div class="status mono upper">
+    <div>FR · CET 14:42 — Saison 2026 · Manche R06</div>
+    <div class="live"><span class="dot"></span>Synchronisation FIA · OK · Dernière 06:12 CET</div>
+    <div>Montréal +6 · Monaco +0 · São Paulo −5</div>
+  </div>
+
+  <!-- nav -->
+  <nav class="bar">
+    <div class="logo">PIT<span class="sep"></span>LANE</div>
+    <div class="nav-links">
+      <a href="Pitlane Hero.html"><span class="num">01</span>PADDOCK</a>
+      <a href="Pitlane Calendar.html" class="active"><span class="num">02</span>CALENDRIER</a>
+      <a href="#"><span class="num">03</span>MON GARAGE</a>
+      <a href="#"><span class="num">04</span>MA SAISON</a>
+    </div>
+  </nav>
+
+  <!-- breadcrumb -->
+  <div class="subbar mono upper">
+    <div class="crumbs">
+      <span class="back"><span class="arr">←</span>Retour</span>
+      &nbsp;&nbsp;<em>/</em> Calendrier <em>/</em> <span>R06 · Monaco</span>
+    </div>
+    <div>Fiche course · Édition #248 · 11 Mai 2026</div>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="ghost">06</div>
+    <div class="hero-inner">
+      <div class="round-line">
+        <span>ROUND 06 · URBAIN</span>
+        <span class="tick"></span>
+        <span class="silver">/ 24 manches · Saison 2026</span>
+      </div>
+
+      <h1 class="gp">GRAND PRIX<br/>DE <span class="accent">MONACO</span></h1>
+
+      <div class="hero-meta">
+        <span class="flag">🇲🇨</span>
+        <span class="strong">Circuit de Monaco</span>
+        <span class="sep">·</span>
+        <span>Boucle urbaine · Monte-Carlo</span>
+        <span class="sep">·</span>
+        <span class="date">22 — 24 MAI 2026</span>
+      </div>
+    </div>
+    <div class="hero-rule"></div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats">
+    <div class="stat">
+      <div class="k"><span>/ Distance par tour</span><span class="idx">A.01</span></div>
+      <div class="v"><span data-target="3.337" data-decimals="3">0.000</span><span class="u">km</span></div>
+      <div class="desc">Longueur officielle · <b>3 337 m</b> · 19 virages</div>
+    </div>
+    <div class="stat">
+      <div class="k"><span>/ Nombre de tours</span><span class="idx">A.02</span></div>
+      <div class="v"><span data-target="78" data-decimals="0">00</span><span class="u">laps</span></div>
+      <div class="desc">Course complète · <b>~ 1H 45M</b> de course estimée</div>
+    </div>
+    <div class="stat">
+      <div class="k"><span>/ Distance totale</span><span class="idx">A.03</span></div>
+      <div class="v"><span data-target="260.0" data-decimals="1">0.0</span><span class="u">km</span></div>
+      <div class="desc">Cumul course · <b>260 286 m</b> parcourus · 0 zone DRS</div>
+    </div>
+  </section>
+
+  <!-- CONTENT -->
+  <section class="content">
+    <div class="desc-block">
+      <div class="kicker">/ Briefing course <b>● R06</b></div>
+      <p class="lede">
+        Tracée dans les rues de la <strong>Principauté</strong>, la boucle de Monte-Carlo reste la pièce maîtresse du calendrier — un circuit urbain où la moindre erreur se paie comptant contre les rails. Les rapports passent court, les rétroviseurs débordent, et la <strong>qualification du samedi</strong> détermine presque tout : doubler ici relève de la chirurgie.
+        Pour cette édition 2026, le règlement aérodynamique réduit l'effet de sol en virage lent : attendez-vous à des temps en hausse de <em>~0.8s</em> et à des trains avant plus chargés. La stratégie pneumatiques tient en deux relais, avec un <strong>arrêt obligatoire</strong> entre le tour 25 et le tour 45.
+      </p>
+    </div>
+
+    <aside class="factsheet">
+      <h4>Fiche circuit <b>● Officielle</b></h4>
+      <div class="row"><span>Pole 2025</span><b>L. NORRIS · 1:09.954</b></div>
+      <div class="row"><span>Tour record</span><b>L. HAMILTON · 1:12.909</b></div>
+      <div class="row"><span>Vainqueur 2025</span><b>C. LECLERC</b></div>
+      <div class="row"><span>Virages</span><b>19 · 12 droits 7 gauches</b></div>
+      <div class="row"><span>Zones DRS</span><b class="red">0</b></div>
+      <div class="row"><span>Probabilité pluie</span><b>22 %</b></div>
+      <div class="row"><span>Fuseau horaire</span><b>CEST · UTC +2</b></div>
+      <div class="row"><span>Heure départ</span><b>15:00 CEST · DIM</b></div>
+    </aside>
+  </section>
+
+  <!-- TYPE -->
+  <section class="type-row">
+    <div class="lbl">/ Type de <b>CIRCUIT</b></div>
+    <div class="tags">
+      <span class="tag outline-red">URBAIN</span>
+      <span class="tag solid-red">SPRINT WEEKEND</span>
+      <span class="tag outline-ink">19 VIRAGES</span>
+      <span class="tag outline-ink">SENS HORAIRE</span>
+      <span class="tag outline-ink">PNEU C3 / C4 / C5</span>
+    </div>
+  </section>
+
+  <!-- SESSIONS -->
+  <section class="sessions">
+    <div class="ses"><div class="d">Jeu · 21 Mai</div><div class="name">SHAKEDOWN</div><div class="t">— média day —</div></div>
+    <div class="ses"><div class="d">Ven · 22 Mai</div><div class="name">FP1 · FP2</div><div class="t">13:30 · 17:00 CEST</div></div>
+    <div class="ses"><div class="d">Sam · 23 Mai</div><div class="name">FP3</div><div class="t">12:30 CEST</div></div>
+    <div class="ses"><div class="d">Sam · 23 Mai</div><div class="name">QUALIF.</div><div class="t">16:00 CEST</div></div>
+    <div class="ses race"><div class="d">Dim · 24 Mai</div><div class="name">COURSE</div><div class="t">15:00 CEST · 78 T</div></div>
+  </section>
+
+  <!-- CTAs -->
+  <section class="cta-row">
+    <button class="btn btn-primary" id="cta-add">
+      <span>AJOUTER AU GARAGE</span>
+      <span class="glyph">⊞</span>
+    </button>
+    <button class="btn btn-ghost" id="cta-seen">
+      <span>J'AI REGARDÉ</span>
+      <span class="glyph">✓</span>
+    </button>
+  </section>
+
+  <div class="foot">
+    <div class="ver">PIT·LANE <b>v26.06.1</b> — Companion non officiel · Fiche course R06</div>
+    <div>R06 / 24 · Monaco · Dim 24 Mai · 15:00 CEST</div>
+  </div>
+
+</div>
+
+<script>
+  // count-up stat animation
+  (function(){
+    const els = document.querySelectorAll('.stat [data-target]');
+    const start = performance.now();
+    const dur = 1400;
+    function easeOut(t){return 1-Math.pow(1-t,3);}
+    function frame(now){
+      const t = Math.min(1,(now-start)/dur);
+      const e = easeOut(t);
+      els.forEach(el=>{
+        const target = parseFloat(el.dataset.target);
+        const dec = parseInt(el.dataset.decimals,10);
+        const val = target * e;
+        el.textContent = dec ? val.toFixed(dec) : Math.round(val).toString().padStart(2,'0');
+      });
+      if(t<1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
+
+  // CTA toggles
+  const add = document.getElementById('cta-add');
+  add.addEventListener('click',()=>{
+    const on = add.classList.toggle('saved');
+    add.firstElementChild.textContent = on ? 'AJOUTÉ AU GARAGE' : 'AJOUTER AU GARAGE';
+  });
+  const seen = document.getElementById('cta-seen');
+  seen.addEventListener('click',()=>{
+    const on = seen.classList.toggle('checked');
+    seen.firstElementChild.textContent = on ? 'COURSE REGARDÉE' : 'J\u2019AI REGARDÉ';
+  });
+</script>
+
+</body>
+</html>

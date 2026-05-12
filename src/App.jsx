@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useRef } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
@@ -8,7 +8,10 @@ import { Calendar } from './pages/Calendar';
 import { RaceDetails } from './pages/RaceDetails';
 import { MyGarage } from './pages/MyGarage';
 import { MySeason } from './pages/MySeason';
-import { F1Car } from './components/F1Car';
+import { Drivers } from './pages/Drivers';
+import { Teams } from './pages/Teams';
+import { CircuitDetail } from './pages/CircuitDetail';
+import { Alerts } from './pages/Alerts';
 
 const NotFound = () => (
   <div className="page not-found">
@@ -18,48 +21,55 @@ const NotFound = () => (
 );
 
 export const App = () => {
-  const location = useLocation();
-  const [isDriving, setIsDriving] = useState(false);
+  const location    = useLocation();
+  const pageWrapRef = useRef(null);
 
+  // clean page transition — fade + lift on every route change
   useGSAP(() => {
-    // Prevent animation on initial load, only on route changes
-    if (location.key === 'default') return; // Not perfect, but we can animate every time
-
-    setIsDriving(true);
-
-    // Position it off-screen left and slightly randomly on Y
-    const randomY = Math.random() * 60 + 10; // Between 10vh and 70vh
-    gsap.set('.global-f1-car', { x: '-100vw', y: `${randomY}vh`, opacity: 1 });
-
-    // Animate to right side
-    gsap.to('.global-f1-car', {
-      x: '110vw',
-      duration: 1.2,
-      ease: 'power2.inOut',
-      onComplete: () => {
-        setIsDriving(false);
-        gsap.set('.global-f1-car', { opacity: 0 }); // Hide when not driving
-      }
-    });
+    if (!pageWrapRef.current) return;
+    gsap.fromTo(
+      pageWrapRef.current,
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }
+    );
   }, { dependencies: [location.pathname] });
 
   return (
     <div className="app-container">
-      <Navbar />
-
-      {/* Global animated car */}
-      <div className="global-f1-car-wrapper" style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 9999 }}>
-        <F1Car isDriving={isDriving} className="global-f1-car" />
+      {/* Viewport corner ticks */}
+      <div className="ticks" aria-hidden="true">
+        <span className="tl" />
+        <span className="tr" />
+        <span className="bl" />
+        <span className="br" />
       </div>
 
-      <main className="content">
+      {/* Status bar */}
+      <div className="status-bar">
+        <div className="status-bar__inner">
+          <span>FR · Saison 2026 · 24 Grands Prix</span>
+          <span className="status-bar__live">
+            <span className="blink-dot" />
+            Companion non officiel · Live
+          </span>
+          <span>Édition 2026</span>
+        </div>
+      </div>
+
+      <Navbar />
+
+      <main className="content" ref={pageWrapRef}>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/calendrier" element={<Calendar />} />
+          <Route path="/"                  element={<Home />} />
+          <Route path="/calendrier"        element={<Calendar />} />
           <Route path="/calendrier/:raceId" element={<RaceDetails />} />
-          <Route path="/mongarage" element={<MyGarage />} />
-          <Route path="/masaison" element={<MySeason />} />
-          <Route path="*" element={<NotFound />} />
+          <Route path="/mongarage"         element={<MyGarage />} />
+          <Route path="/masaison"          element={<MySeason />} />
+          <Route path="/pilotes"           element={<Drivers />} />
+          <Route path="/ecuriess"          element={<Teams />} />
+          <Route path="/circuits/:circuitId" element={<CircuitDetail />} />
+          <Route path="/alertes"           element={<Alerts />} />
+          <Route path="*"                  element={<NotFound />} />
         </Routes>
       </main>
     </div>
