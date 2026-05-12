@@ -46,6 +46,7 @@ const fmtDate = (iso) => {
 
 export const MySeason = () => {
   const logRef = useRef(null);
+  const progressRef = useRef(null);
 
   // useLocalStorage reads once on mount via lazy initializer — no polling
   const [watched] = useLocalStorage('pitlane_watched', []);
@@ -76,43 +77,71 @@ export const MySeason = () => {
     [watchedRaces, selectedContinent, selectedType]
   );
 
+  const count = watchedRaces.length;
+  const totalRaces = 24; // Assuming 24 races in a season
+  const progressPercentage = Math.min(100, Math.round((count / totalRaces) * 100));
+
   // GSAP: per-entry ScrollTrigger slide-in — re-runs on filter change, previous triggers auto-cleaned
   useGSAP(() => {
-    if (!logRef.current) return;
-    const entries = Array.from(logRef.current.children);
-    if (!entries.length) return;
     const mm = gsap.matchMedia();
     mm.add('(prefers-reduced-motion: no-preference)', () => {
-      entries.forEach((entry) => {
-        gsap.from(entry, {
-          autoAlpha: 0,
-          x: -20,
-          duration: 0.4,
-          ease: 'power2.out',
-          scrollTrigger: {
-            trigger: entry,
-            start: 'top 90%',
-            toggleActions: 'play none none none',
-          },
-        });
-      });
-      ScrollTrigger.refresh();
-    });
-  }, { dependencies: [filteredWatched] });
+      // Progress bar animation
+      if (progressRef.current) {
+        gsap.fromTo(
+          progressRef.current,
+          { width: '0%' },
+          { 
+            width: `${progressPercentage}%`, 
+            duration: 1.5, 
+            ease: 'power3.out',
+            delay: 0.2
+          }
+        );
+      }
 
-  const count = filteredWatched.length;
+      // List entries animation
+      if (logRef.current && logRef.current.children.length > 0) {
+        const entries = Array.from(logRef.current.children);
+        entries.forEach((entry) => {
+          gsap.from(entry, {
+            autoAlpha: 0,
+            x: -20,
+            duration: 0.4,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: entry,
+              start: 'top 90%',
+              toggleActions: 'play none none none',
+            },
+          });
+        });
+        ScrollTrigger.refresh();
+      }
+    });
+  }, { dependencies: [filteredWatched, progressPercentage] });
+
+  const filteredCount = filteredWatched.length;
   const sprintCount = filteredWatched.filter((r) => r.isSprint).length;
 
   return (
     <div className="page my-season">
       <h1 className="my-season__title">Ma Saison</h1>
 
-      {watchedRaces.length > 0 && (
-        <p className="my-season__subtitle">
-          {count} course{count !== 1 ? 's' : ''} regardée{count !== 1 ? 's' : ''} sur 24
-          {sprintCount > 0 && ` — ${sprintCount} sprint${sprintCount > 1 ? 's' : ''}`}
-        </p>
-      )}
+      {/* ── Progress Section ── */}
+      <div className="season-progress-container">
+        <div className="season-progress-header">
+          <p className="my-season__subtitle" style={{ margin: 0 }}>
+            {count} course{count !== 1 ? 's' : ''} regardée{count !== 1 ? 's' : ''} sur {totalRaces}
+            {sprintCount > 0 && ` — ${sprintCount} sprint${sprintCount > 1 ? 's' : ''}`}
+          </p>
+          <span className="season-progress-percentage">{progressPercentage}%</span>
+        </div>
+        <div className="season-progress-track">
+          <div className="season-progress-fill" ref={progressRef}>
+            <div className="season-progress-glow"></div>
+          </div>
+        </div>
+      </div>
 
       <FilterBar
         continents={CONTINENTS}
@@ -131,7 +160,7 @@ export const MySeason = () => {
             Aucune course marquée comme regardée — commence depuis la fiche d'un Grand Prix ✓
           </p>
         </div>
-      ) : filteredWatched.length === 0 ? (
+      ) : filteredCount === 0 ? (
         <p className="season__empty-filter">
           Aucune course ne correspond aux filtres sélectionnés.
         </p>
