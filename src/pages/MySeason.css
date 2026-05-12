@@ -1,67 +1,84 @@
 /* ─── Page layout ─────────────────────────────────────────── */
 .my-season {
   gap: 2rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .my-season__title {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 6vw, 5rem);
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: -0.02em;
-  color: #F0EDE8;
+  color: var(--text);
   margin: 0;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
 .my-season__subtitle {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-family: var(--font-mono);
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #E5001A;
+  color: var(--red);
   margin: -1.5rem 0 0;
+  text-shadow: 0 0 10px var(--red-glow);
 }
 
-/* ─── Season log (flat list, design-system row style) ─────── */
+/* ─── Season log ─────── */
 .season-log {
   list-style: none;
   padding: 0;
   margin: 0;
   display: flex;
   flex-direction: column;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
 }
 
 .season-entry {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-  padding: 1.5rem 0;
-  border-bottom: 1px solid rgba(154, 154, 150, 0.15);
-  transition: background 0.1s;
+  gap: 1.5rem;
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--glass-border);
+  transition: all 0.2s ease;
 }
 
-.season-entry:first-child {
-  border-top: 1px solid rgba(154, 154, 150, 0.15);
+.season-entry:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.season-entry:last-child {
+  border-bottom: none;
 }
 
 /* ─── Round number ────────────────────────────────────────── */
 .season-entry__round {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 2rem;
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
   font-weight: 900;
   line-height: 1;
-  color: #E5001A;
-  width: 52px;
+  color: var(--red);
+  width: 60px;
   flex-shrink: 0;
   text-align: right;
+  text-shadow: 0 0 10px var(--red-glow);
 }
 
 /* ─── Flag ────────────────────────────────────────────────── */
 .season-entry__flag {
-  font-size: 1.4rem;
+  font-size: 1.8rem;
   line-height: 1;
   flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
 }
 
 /* ─── Name + date ─────────────────────────────────────────── */
@@ -74,26 +91,31 @@
 }
 
 .season-entry__name {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
   font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: -0.01em;
-  line-height: 1.05;
-  color: #F0EDE8;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  color: var(--text);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: color 0.2s;
+}
+
+.season-entry:hover .season-entry__name {
+  color: var(--cyan);
 }
 
 .season-entry__date {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #9A9A96;
+  color: var(--silver);
   margin: 0;
 }
 
@@ -102,71 +124,78 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: 4px;
+  gap: 6px;
   flex-shrink: 0;
 }
 
 .season-badge {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-family: var(--font-mono);
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 3px 8px;
-  border: 1px solid;
+  padding: 4px 10px;
+  border-radius: 4px;
   white-space: nowrap;
 }
 
 .season-badge--continent {
-  border-color: rgba(154, 154, 150, 0.25);
-  color: #9A9A96;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  color: var(--silver);
 }
 
 .season-badge--sprint {
-  border-color: #E5001A;
-  color: #E5001A;
+  background: var(--red);
+  color: var(--text);
+  box-shadow: 0 0 10px var(--red-glow);
 }
 
 /* ─── Empty states ────────────────────────────────────────── */
 .season-empty {
-  padding: 4rem 2rem;
+  padding: 5rem 2rem;
   text-align: center;
-  border: 1px dashed rgba(154, 154, 150, 0.25);
-  color: #9A9A96;
+  border: 1px dashed var(--glass-border);
+  background: rgba(10, 10, 10, 0.5);
+  border-radius: 8px;
+  color: var(--silver);
 }
 
 .season-empty p {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-family: var(--font-mono);
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   margin: 0;
 }
 
 .season__empty-filter {
-  padding: 4rem 2rem;
+  padding: 5rem 2rem;
   text-align: center;
-  color: #9A9A96;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  border: 1px dashed var(--glass-border);
+  background: rgba(10, 10, 10, 0.5);
+  border-radius: 8px;
+  color: var(--silver);
+  font-family: var(--font-mono);
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 /* ─── Responsive ──────────────────────────────────────────── */
 @media (max-width: 520px) {
   .season-entry {
-    gap: 0.75rem;
-    padding: 1.25rem 0;
+    gap: 1rem;
+    padding: 1.25rem 1rem;
   }
   .season-entry__round {
-    font-size: 1.5rem;
-    width: 38px;
+    font-size: 2rem;
+    width: 48px;
   }
   .season-entry__name {
-    font-size: 1.1rem;
+    font-size: 1.4rem;
   }
   .season-entry__badges {
     display: none;

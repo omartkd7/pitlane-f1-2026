@@ -1,33 +1,50 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,900;1,900&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,900;1,700;1,900&family=JetBrains+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap');
 
 /* ─── Design Tokens ───────────────────────────────────────── */
 :root {
-  --red:    #E5001A;
-  --bg:     #0A0A0A;
-  --surface:#1A1A1A;
-  --text:   #F0EDE8;
-  --silver: #9A9A96;
-  --border: rgba(154, 154, 150, 0.2);
+  --red:       #FF1801;
+  --red-glow:  #FF180199;
+  --cyan:      #00e5ff;
+  --bg:        #030303;
+  --surface:   #111111;
+  --surface-alt:#1a1a1a;
+  --glass-bg:  rgba(17, 17, 17, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --text:      #ffffff;
+  --text-muted:#888888;
+  --silver:    #a0a0a0;
+  --border:    rgba(255, 255, 255, 0.05);
+  
+  --font-heading: 'Barlow Condensed', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+  --font-body:    'Inter', sans-serif;
 }
 
 /* ─── Global reset ────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
-  border-radius: 0 !important;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
   background-color: var(--bg);
   color: var(--text);
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 14px;
+  font-family: var(--font-body);
+  font-size: 15px;
   line-height: 1.6;
   font-weight: 400;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden; /* Prevent scrollbar during car animation */
+}
+
+/* Base heading styles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  line-height: 1.1;
+  margin: 0;
 }
 
 #root {
@@ -42,15 +59,26 @@ a {
   text-decoration: none;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  margin: 0;
-}
-
 /* ─── App layout ──────────────────────────────────────────── */
 .app-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  position: relative;
+  overflow: hidden; /* Prevent horizontal scroll from F1 Car */
+}
+
+/* Subtle background gradient */
+.app-container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at 50% 0%, rgba(255, 24, 1, 0.05), transparent 60%);
+  pointer-events: none;
+  z-index: -1;
 }
 
 .content {
@@ -59,6 +87,7 @@ h1, h2, h3, h4, h5, h6 {
   max-width: 1280px;
   margin: 0 auto;
   padding: 3rem 3rem;
+  z-index: 1;
 }
 
 @media (max-width: 768px) {
@@ -74,28 +103,44 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: space-between;
   align-items: center;
   padding: 0 3rem;
-  height: 64px;
-  background-color: var(--bg);
-  border-bottom: 1px solid var(--border);
+  height: 70px;
+  background-color: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border);
   position: sticky;
   top: 0;
   z-index: 50;
+  transition: all 0.3s ease;
 }
 
 .nav-brand {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 2rem;
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
   font-weight: 900;
   color: var(--text);
-  letter-spacing: -0.03em;
+  letter-spacing: 1px;
   line-height: 1;
   text-decoration: none;
+  position: relative;
+}
+
+.nav-brand::after {
+  content: '';
+  position: absolute;
+  right: -8px;
+  bottom: 6px;
+  width: 6px;
+  height: 6px;
+  background-color: var(--red);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--red-glow);
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 2.5rem;
+  gap: 3rem;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -109,27 +154,50 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .nav-link {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
+  font-family: var(--font-mono);
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--silver);
   text-decoration: none;
   display: flex;
   align-items: center;
   height: 100%;
-  border-bottom: 2px solid transparent;
-  transition: color 0.1s;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--red);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.3s cubic-bezier(0.86, 0, 0.07, 1);
 }
 
 .nav-link:hover {
   color: var(--text);
 }
 
+.nav-link:hover::before {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
 .nav-link--active {
-  color: var(--red);
-  border-bottom: 2px solid var(--red);
+  color: var(--text);
+}
+
+.nav-link--active::before {
+  transform: scaleX(1);
+  transform-origin: left;
+  box-shadow: 0 -2px 10px var(--red-glow);
 }
 
 /* ─── Page wrapper ────────────────────────────────────────── */
@@ -137,6 +205,7 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-direction: column;
   text-align: left;
+  width: 100%;
 }
 
 /* ─── 404 ─────────────────────────────────────────────────── */
@@ -150,16 +219,18 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .not-found h1 {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--font-heading);
   font-size: clamp(6rem, 20vw, 12rem);
   font-weight: 900;
   line-height: 0.9;
   color: var(--red);
   opacity: 0.8;
+  text-shadow: 0 0 30px var(--red-glow);
 }
 
 .not-found p {
-  font-size: 11px;
+  font-family: var(--font-mono);
+  font-size: 13px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--silver);
@@ -167,9 +238,21 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (max-width: 768px) {
   .navbar {
-    padding: 0 1rem;
+    padding: 0 1.5rem;
+    height: 60px;
+  }
+  .nav-brand {
+    font-size: 1.8rem;
+  }
+  .nav-brand::after {
+    right: -6px;
+    width: 4px;
+    height: 4px;
   }
   .nav-links {
     gap: 1.25rem;
+  }
+  .nav-link {
+    font-size: 10px;
   }
 }

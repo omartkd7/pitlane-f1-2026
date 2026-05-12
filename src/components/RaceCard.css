@@ -1,38 +1,50 @@
 /* ─── Card shell ──────────────────────────────────────────── */
 .race-card {
-  background: #1A1A1A;
-  border: 1px solid rgba(154, 154, 150, 0.2);
-  border-left: 3px solid #E5001A;
-  padding: 1.5rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-left: 4px solid var(--red);
+  padding: 1.75rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1rem;
   height: 100%;
   box-sizing: border-box;
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  min-height: 180px;
-  transition: background 0.12s;
+  min-height: 200px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .race-card:hover {
-  background: #222;
+  background: rgba(30, 30, 30, 0.8);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(255, 24, 1, 0.15);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 /* ─── Ghost round number ──────────────────────────────────── */
 .race-card__ghost {
   position: absolute;
-  bottom: -12px;
-  right: -4px;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 110px;
+  bottom: -15px;
+  right: -5px;
+  font-family: var(--font-heading);
+  font-size: 130px;
   font-weight: 900;
-  color: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.03);
   line-height: 1;
   pointer-events: none;
   user-select: none;
   z-index: 0;
+  transition: color 0.3s ease;
+}
+
+.race-card:hover .race-card__ghost {
+  color: rgba(255, 255, 255, 0.06);
 }
 
 /* ─── Top: round + badges ─────────────────────────────────── */
@@ -45,38 +57,40 @@
 }
 
 .race-card__round {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #E5001A;
+  color: var(--red);
+  text-shadow: 0 0 10px var(--red-glow);
 }
 
 .race-card__badges {
   display: flex;
-  gap: 3px;
+  gap: 6px;
 }
 
 .race-card__badge {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 2px 6px;
-  border: 1px solid;
+  padding: 4px 8px;
+  border-radius: 4px;
 }
 
 .race-card__badge--sprint {
-  background: #E5001A;
-  border-color: #E5001A;
-  color: #F0EDE8;
+  background: var(--red);
+  color: var(--text);
+  box-shadow: 0 0 10px var(--red-glow);
 }
 
 .race-card__badge--new {
-  border-color: rgba(154, 154, 150, 0.4);
-  color: #9A9A96;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  border: 1px solid var(--glass-border);
 }
 
 /* ─── Body: name + circuit ────────────────────────────────── */
@@ -87,46 +101,54 @@
 }
 
 .race-card__name {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 1.6rem;
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
   font-weight: 900;
-  line-height: 1.05;
+  line-height: 1.1;
   text-transform: uppercase;
-  letter-spacing: -0.01em;
-  color: #F0EDE8;
+  letter-spacing: 0.02em;
+  color: var(--text);
   margin: 0;
+  transition: color 0.2s;
+}
+
+.race-card:hover .race-card__name {
+  color: var(--cyan);
 }
 
 .race-card__circuit {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   font-weight: 400;
-  color: #9A9A96;
-  margin: 4px 0 0;
+  color: var(--silver);
+  margin: 6px 0 0;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
 }
 
 /* ─── Footer: flag + dates ────────────────────────────────── */
 .race-card__footer {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   position: relative;
   z-index: 1;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .race-card__flag {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   line-height: 1;
   flex-shrink: 0;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
 }
 
 .race-card__dates {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #9A9A96;
+  color: var(--silver);
 }

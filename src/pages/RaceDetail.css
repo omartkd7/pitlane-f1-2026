@@ -1,27 +1,34 @@
 /* ─── Page layout ─────────────────────────────────────────── */
 .race-detail {
   max-width: 800px;
-  gap: 2rem;
+  gap: 2.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ─── Back button ─────────────────────────────────────────── */
 .back-btn {
   align-self: flex-start;
-  background: none;
-  border: none;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #9A9A96;
+  color: var(--silver);
   cursor: pointer;
-  padding: 0;
-  transition: color 0.1s;
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(8px);
 }
 
 .back-btn:hover {
-  color: #F0EDE8;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(-4px);
 }
 
 /* ─── Not-found state ─────────────────────────────────────── */
@@ -30,187 +37,220 @@
 }
 
 .race-detail--not-found h1 {
-  font-family: 'Barlow Condensed', sans-serif;
+  font-family: var(--font-heading);
   font-size: 3rem;
   font-weight: 900;
   text-transform: uppercase;
-  color: #9A9A96;
+  color: var(--silver);
 }
 
 .race-detail--not-found code {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   background: rgba(154, 154, 150, 0.1);
   padding: 2px 6px;
-  border: 1px solid rgba(154, 154, 150, 0.2);
+  border: 1px solid var(--glass-border);
   font-size: 0.9em;
+  border-radius: 4px;
 }
 
 /* ─── Header ──────────────────────────────────────────────── */
 .race-header {
   display: flex;
   align-items: flex-start;
-  gap: 1.25rem;
-  border-bottom: 1px solid rgba(154, 154, 150, 0.2);
+  gap: 1.5rem;
+  border-bottom: 1px solid var(--glass-border);
   padding-bottom: 2rem;
+  position: relative;
 }
 
 .race-flag {
-  font-size: 3rem;
+  font-size: 4rem;
   line-height: 1;
   flex-shrink: 0;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,0.5));
 }
 
 .race-header__text {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
 }
 
 .race-round {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10px;
+  font-family: var(--font-mono);
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #E5001A;
+  color: var(--red);
   margin: 0;
+  text-shadow: 0 0 10px var(--red-glow);
 }
 
 .race-name {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: clamp(2rem, 5vw, 4rem);
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: -0.02em;
   line-height: 0.95;
-  color: #F0EDE8;
+  color: var(--text);
   margin: 0;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
 .race-location {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 11px;
-  color: #9A9A96;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--silver);
   margin: 0;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
 }
 
 /* ─── Badges ──────────────────────────────────────────────── */
 .race-badges {
   display: flex;
-  gap: 4px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .badge {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-family: var(--font-mono);
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  padding: 3px 8px;
+  padding: 6px 12px;
   border: 1px solid;
+  border-radius: 4px;
 }
 
 .badge--sprint {
-  background: #E5001A;
-  border-color: #E5001A;
-  color: #F0EDE8;
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--text);
+  box-shadow: 0 0 15px var(--red-glow);
 }
 
 .badge--new {
-  border-color: rgba(154, 154, 150, 0.4);
-  color: #9A9A96;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--glass-border);
+  color: var(--silver);
 }
 
 /* ─── Action buttons ──────────────────────────────────────── */
 .race-actions {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  flex-direction: row;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .action-btn {
-  width: 100%;
+  flex: 1;
+  min-width: 200px;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 8px;
-  padding: 14px 20px;
-  border: 1px solid rgba(154, 154, 150, 0.25);
-  background: transparent;
-  font-family: 'JetBrains Mono', monospace;
+  gap: 10px;
+  padding: 16px 24px;
+  border: 1px solid var(--glass-border);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: #9A9A96;
+  color: var(--silver);
   cursor: pointer;
-  transition: color 0.1s, border-color 0.1s, background 0.1s;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .action-btn:hover {
-  color: #F0EDE8;
-  border-color: rgba(154, 154, 150, 0.5);
+  color: var(--text);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
 }
 
 .action-btn--favorite.action-btn--active {
-  background: #E5001A;
-  border-color: #E5001A;
-  color: #F0EDE8;
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--text);
+  box-shadow: 0 8px 25px var(--red-glow);
+}
+
+.action-btn--favorite.action-btn--active:hover {
+  background: #ff331a;
+  border-color: #ff331a;
 }
 
 .action-btn--watched.action-btn--active {
-  background: #1A1A1A;
-  border-color: rgba(154, 154, 150, 0.5);
-  color: #F0EDE8;
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--text);
 }
 
-/* ─── Info grid (gap-as-divider) ──────────────────────────── */
+/* ─── Info grid ──────────────────────────── */
 .race-info-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-  gap: 1px;
-  background: rgba(154, 154, 150, 0.15);
-  border: 1px solid rgba(154, 154, 150, 0.15);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 
 .race-info-item {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  padding: 1rem 1.25rem;
-  background: #1A1A1A;
+  gap: 6px;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .race-info-item .label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 9px;
+  font-family: var(--font-mono);
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: #9A9A96;
+  color: var(--silver);
 }
 
 .race-info-item .value {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 18px;
+  font-family: var(--font-mono);
+  font-size: 20px;
   font-weight: 700;
-  color: #F0EDE8;
+  color: var(--text);
   line-height: 1.2;
 }
 
 /* ─── Description ─────────────────────────────────────────── */
 .race-description {
-  padding: 1.5rem;
-  background: #1A1A1A;
-  border: 1px solid rgba(154, 154, 150, 0.2);
-  border-left: 3px solid #E5001A;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 13px;
-  line-height: 1.75;
-  color: #9A9A96;
+  padding: 2rem;
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-left: 4px solid var(--red);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--silver);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
 }
 
 .race-description p {

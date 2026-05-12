@@ -1,0 +1,29 @@
+.f1-car-container {
+  display: inline-block;
+  pointer-events: none;
+  z-index: 9999;
+  filter: drop-shadow(0 4px 10px rgba(255, 24, 1, 0.4));
+  transition: filter 0.3s ease;
+}
+
+.f1-car-container.driving {
+  filter: drop-shadow(0 0 15px rgba(0, 229, 255, 0.7)) drop-shadow(0 0 30px rgba(255, 24, 1, 0.5));
+}
+
+.f1-car-svg {
+  width: 150px;
+  height: auto;
+  overflow: visible;
+}
+
+@media (min-width: 768px) {
+  .f1-car-svg {
+    width: 250px;
+  }
+}
+
+.f1-chassis,
+.f1-wheel,
+.f1-exhaust {
+  transform-box: fill-box;
+}
