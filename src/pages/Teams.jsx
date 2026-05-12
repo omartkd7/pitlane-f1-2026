@@ -21,40 +21,43 @@ export const Teams = () => {
 
   useGSAP(() => {
     const rows = rowRefs.current.filter(Boolean);
-    rows.forEach((row, i) => {
-      gsap.from(row, {
-        opacity: 0,
-        y: 6,
-        duration: 0.4,
-        ease: 'power2.out',
-        delay: Math.min(i, 8) * 0.055,
-        scrollTrigger: {
-          trigger: row,
-          start: 'top 93%',
-          toggleActions: 'play none none none',
-        },
-      });
-    });
+    const bars = barRefs.current.filter(Boolean);
 
-    barRefs.current.filter(Boolean).forEach((bar, i) => {
-      const team = teams[i];
-      const pct  = Math.round((team.points / maxPoints) * 100);
-      gsap.fromTo(
-        bar,
-        { width: '0%' },
-        {
-          width: `${pct}%`,
-          duration: 1.2,
-          ease: 'power3.out',
-          delay: Math.min(i, 8) * 0.055 + 0.18,
-          scrollTrigger: {
-            trigger: bar,
-            start: 'top 93%',
-            toggleActions: 'play none none none',
-          },
-        }
-      );
-    });
+    const mm = gsap.matchMedia();
+    mm.add(
+      {
+        isNormal:  '(prefers-reduced-motion: no-preference)',
+        isReduced: '(prefers-reduced-motion: reduce)',
+      },
+      (ctx) => {
+        const { isNormal } = ctx.conditions;
+
+        rows.forEach((row, i) => {
+          gsap.from(row, {
+            autoAlpha: 0,
+            y:        isNormal ? 6 : 0,
+            duration: isNormal ? 0.4 : 0,
+            ease: 'power2.out',
+            delay: isNormal ? Math.min(i, 8) * 0.055 : 0,
+            scrollTrigger: { trigger: row, start: 'top 93%', toggleActions: 'play none none none' },
+          });
+        });
+
+        bars.forEach((bar, i) => {
+          const team = teams[i];
+          const pct  = Math.round((team.points / maxPoints) * 100);
+          gsap.fromTo(bar, { width: '0%' }, {
+            width: `${pct}%`,
+            duration: isNormal ? 1.2 : 0,
+            ease: 'power3.out',
+            delay: isNormal ? Math.min(i, 8) * 0.055 + 0.18 : 0,
+            scrollTrigger: { trigger: bar, start: 'top 93%', toggleActions: 'play none none none' },
+          });
+        });
+
+        return () => mm.revert();
+      }
+    );
   }, { scope: pageRef });
 
   useEffect(() => { ScrollTrigger.refresh(); }, []);

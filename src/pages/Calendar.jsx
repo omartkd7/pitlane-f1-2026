@@ -41,11 +41,25 @@ export const Calendar = () => {
 
   const [displayedRaces, setDisplayedRaces] = useState(filteredRaces);
 
-  // initial stagger
+  // initial stagger — respects prefers-reduced-motion
   useGSAP(() => {
     const cards = cardRefs.current.filter(Boolean);
     if (!cards.length) return;
-    gsap.from(cards, { opacity: 0, y: 20, stagger: 0.05, duration: 0.4, ease: 'power2.out' });
+    const mm = gsap.matchMedia();
+    mm.add(
+      { isNormal: '(prefers-reduced-motion: no-preference)', isReduced: '(prefers-reduced-motion: reduce)' },
+      (ctx) => {
+        const { isNormal } = ctx.conditions;
+        gsap.from(cards, {
+          autoAlpha: 0,
+          y:        isNormal ? 20 : 0,
+          stagger:  isNormal ? 0.05 : 0,
+          duration: isNormal ? 0.4 : 0,
+          ease: 'power2.out',
+        });
+        return () => mm.revert();
+      }
+    );
   }, { scope: containerRef });
 
   // filter transition
@@ -54,11 +68,11 @@ export const Calendar = () => {
     const out = cardRefs.current.filter(Boolean);
     if (!out.length) { setDisplayedRaces(filteredRaces); return; }
     gsap.timeline()
-      .to(out, { opacity: 0, y: -8, stagger: 0.02, duration: 0.15 })
+      .to(out, { autoAlpha: 0, y: -8, stagger: 0.02, duration: 0.15 })
       .call(() => flushSync(() => setDisplayedRaces(filteredRaces)))
       .call(() => {
         const inCards = cardRefs.current.filter(Boolean);
-        if (inCards.length) gsap.from(inCards, { opacity: 0, y: 16, stagger: 0.04, duration: 0.3 });
+        if (inCards.length) gsap.from(inCards, { autoAlpha: 0, y: 16, stagger: 0.04, duration: 0.3 });
       });
   }, { scope: containerRef, dependencies: [filteredRaces] });
 
@@ -66,7 +80,7 @@ export const Calendar = () => {
   useGSAP(() => {
     cardRefs.current.filter(Boolean).forEach((card) => {
       gsap.from(card, {
-        opacity: 0, y: 14, duration: 0.35,
+        autoAlpha: 0, y: 14, duration: 0.35,
         scrollTrigger: { trigger: card, start: 'top 92%' },
       });
     });

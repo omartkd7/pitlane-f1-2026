@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import races from '../data/races.js';
@@ -230,6 +230,10 @@ export const RaceDetails = () => {
           <span>{isWatched ? "COURSE REGARDÉE" : "J'AI REGARDÉ"}</span>
           <span className="rd-btn__glyph">{isWatched ? '✓' : '○'}</span>
         </button>
+        <Link to={`/circuits/${race.id}`} className="rd-btn rd-btn--ghost">
+          <span>VOIR LE CIRCUIT</span>
+          <span className="rd-btn__glyph">⬡</span>
+        </Link>
       </div>
 
     </div>

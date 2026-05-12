@@ -2,8 +2,13 @@ import { useMemo, useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import races from '../data/races.js';
+import drivers from '../data/drivers.js';
+import teams from '../data/teams.js';
 import './Home.css';
+
+gsap.registerPlugin(ScrollTrigger);
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -44,9 +49,12 @@ const splitGPName = (name) => {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export const Home = () => {
-  const heroRef      = useRef(null);
-  const cdRef        = useRef(null);
-  const cardRef      = useRef(null);
+  const heroRef        = useRef(null);
+  const cdRef          = useRef(null);
+  const cardRef        = useRef(null);
+  const standingsRef   = useRef(null);
+  const driverRowRefs  = useRef([]);
+  const teamRowRefs    = useRef([]);
 
   const today    = useMemo(() => new Date().toISOString().split('T')[0], []);
   const nextRace = useMemo(() => races.find((r) => r.dateStart > today), [today]);
@@ -89,13 +97,49 @@ export const Home = () => {
   useGSAP(() => {
     if (!cardRef.current) return;
     gsap.from(cardRef.current, {
-      opacity: 0,
+      autoAlpha: 0,
       y: 20,
       duration: 0.5,
       ease: 'power2.out',
       scrollTrigger: { trigger: cardRef.current, start: 'top 88%' },
     });
   });
+
+  // standings section — matchMedia respects prefers-reduced-motion
+  useGSAP(() => {
+    if (!standingsRef.current) return;
+    const allRows = [
+      ...driverRowRefs.current.filter(Boolean),
+      ...teamRowRefs.current.filter(Boolean),
+    ];
+    if (!allRows.length) return;
+
+    const mm = gsap.matchMedia();
+    mm.add(
+      {
+        isNormal:  '(prefers-reduced-motion: no-preference)',
+        isReduced: '(prefers-reduced-motion: reduce)',
+      },
+      (ctx) => {
+        const { isNormal } = ctx.conditions;
+        gsap.from(allRows, {
+          autoAlpha: 0,
+          y:        isNormal ? 8 : 0,
+          duration: isNormal ? 0.4 : 0,
+          stagger:  isNormal ? 0.04 : 0,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: standingsRef.current,
+            start: 'top 88%',
+          },
+        });
+        return () => mm.revert();
+      }
+    );
+  }, { scope: standingsRef });
+
+  driverRowRefs.current = [];
+  teamRowRefs.current   = [];
 
   if (!nextRace) {
     return (
@@ -235,6 +279,74 @@ export const Home = () => {
           </Link>
         </div>
       </article>
+
+      {/* ── Section header — Standings ── */}
+      <div className="sec-head" style={{ marginTop: 48 }}>
+        <h2><span className="num">§02</span>CLASSEMENT LIVE</h2>
+        <span className="meta-right">Après Round 06 · Miami</span>
+      </div>
+
+      {/* ── Standings grid ── */}
+      <div className="standings-grid" ref={standingsRef}>
+
+        {/* Drivers panel */}
+        <div className="standings-panel">
+          <div className="standings-panel__head">
+            <span className="standings-panel__title">/ Pilotes</span>
+            <Link to="/pilotes" className="standings-panel__link">Classement complet →</Link>
+          </div>
+          {drivers.slice(0, 5).map((driver, i) => {
+            const team = teams.find((t) => t.id === driver.teamId);
+            return (
+              <div
+                key={driver.id}
+                className={`st-row${i === 0 ? ' st-row--lead' : ''}`}
+                ref={(el) => { driverRowRefs.current[i] = el; }}
+              >
+                <span className="st-pos">{String(i + 1).padStart(2, '0')}</span>
+                <span
+                  className="st-pip"
+                  style={{ background: team?.color ?? 'var(--silver)' }}
+                />
+                <div className="st-name-block">
+                  <span className="st-firstname">{driver.firstName}</span>
+                  <span className="st-lastname">{driver.lastName}</span>
+                </div>
+                <span className="st-team">{driver.team}</span>
+                <span className="st-pts">{driver.points}</span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Teams panel */}
+        <div className="standings-panel">
+          <div className="standings-panel__head">
+            <span className="standings-panel__title">/ Écuries</span>
+            <Link to="/ecuriess" className="standings-panel__link">Classement complet →</Link>
+          </div>
+          {teams.slice(0, 5).map((team, i) => (
+            <div
+              key={team.id}
+              className={`st-row${i === 0 ? ' st-row--lead' : ''}`}
+              ref={(el) => { teamRowRefs.current[i] = el; }}
+            >
+              <span className="st-pos">{String(i + 1).padStart(2, '0')}</span>
+              <span
+                className="st-pip"
+                style={{ background: team.color }}
+              />
+              <div className="st-name-block">
+                <span className="st-lastname">{team.name}</span>
+                <span className="st-firstname">{team.chassis} · {team.engine}</span>
+              </div>
+              <span className="st-team">{team.wins}V · {team.podiums}P</span>
+              <span className="st-pts">{team.points}</span>
+            </div>
+          ))}
+        </div>
+
+      </div>
 
     </div>
   );

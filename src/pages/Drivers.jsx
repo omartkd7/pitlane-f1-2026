@@ -22,20 +22,32 @@ export const Drivers = () => {
   useGSAP(() => {
     const rows = rowRefs.current.filter(Boolean);
     if (!rows.length) return;
-    rows.forEach((row, i) => {
-      gsap.from(row, {
-        opacity: 0,
-        y: 6,
-        duration: 0.4,
-        ease: 'power2.out',
-        delay: Math.min(i, 10) * 0.045,
-        scrollTrigger: {
-          trigger: row,
-          start: 'top 93%',
-          toggleActions: 'play none none none',
-        },
-      });
-    });
+
+    const mm = gsap.matchMedia();
+    mm.add(
+      {
+        isNormal:  '(prefers-reduced-motion: no-preference)',
+        isReduced: '(prefers-reduced-motion: reduce)',
+      },
+      (ctx) => {
+        const { isNormal } = ctx.conditions;
+        rows.forEach((row, i) => {
+          gsap.from(row, {
+            autoAlpha: 0,
+            y:        isNormal ? 6 : 0,
+            duration: isNormal ? 0.4 : 0,
+            ease: 'power2.out',
+            delay: isNormal ? Math.min(i, 10) * 0.045 : 0,
+            scrollTrigger: {
+              trigger: row,
+              start: 'top 93%',
+              toggleActions: 'play none none none',
+            },
+          });
+        });
+        return () => mm.revert();
+      }
+    );
   }, { scope: pageRef });
 
   useEffect(() => { ScrollTrigger.refresh(); }, []);
