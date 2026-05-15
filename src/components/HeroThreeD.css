@@ -1,0 +1,29 @@
+/* ─── HeroThreeD — Three.js canvas overlay ───────────────── */
+.hero-threed {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;  /* text / links above remain interactive */
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* The canvas element Three.js appends — must fill container  */
+.hero-threed canvas {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+/* ── Mobile: slightly fade on small screens ──────────────── */
+@media (max-width: 600px) {
+  .hero-threed { opacity: 0.7; }
+}
+
+/* ── Reduced-motion: freeze the canvas ───────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .hero-threed { display: none; }
+}

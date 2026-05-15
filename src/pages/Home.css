@@ -20,6 +20,37 @@
   padding: 54px 0 56px;
   border-bottom: 1px solid var(--rule);
   overflow: hidden;
+  /* Give the canvas and SVG bg room behind content */
+  isolation: isolate;
+}
+
+/* ── Looping track SVG background ── */
+.hero__track-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+.hero__track-path {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.5;
+  stroke-dasharray: 28 18;
+  opacity: 0.14;
+  animation: track-flow 3.2s linear infinite;
+  will-change: stroke-dashoffset;
+  transition: stroke 0.45s ease;
+}
+.hero__track-path--b {
+  opacity: 0.07;
+  stroke-dasharray: 18 28;
+  animation-delay: -1.6s;
+}
+@keyframes track-flow {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -46; }
 }
 
 /* scanline ghost number */
@@ -56,6 +87,55 @@
   flex-direction: column;
   gap: 22px;
 }
+
+/* Split-text headline words */
+.hero__title-line1 {
+  display: block;
+}
+.hero__word {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* ── CTA button — throttle-fill on hover ── */
+.hero__cta {
+  display: inline-flex;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--rule-strong);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  align-self: flex-start;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+.hero__cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+.hero__cta:hover::before { transform: scaleX(1); }
+.hero__cta:hover { color: #0A0A0A; border-color: var(--accent); }
+[data-theme="light"] .hero__cta:hover { color: #F5F2ED; }
+
+.hero__cta-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 13px 22px;
+}
+.hero__cta-arrow { color: var(--accent); transition: color 0.25s ease; }
+.hero__cta:hover .hero__cta-arrow { color: inherit; }
 
 /* eyebrow */
 .hero__eyebrow {

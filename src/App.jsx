@@ -1,8 +1,11 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import { initPageOverlay } from './animations/cinematic.js';
+import './animations/cinematic.css';
 import { Navbar } from './components/Navbar';
+import { ThemeProvider } from './context/ThemeContext';
 import { Home } from './pages/Home';
 import { Calendar } from './pages/Calendar';
 import { RaceDetails } from './pages/RaceDetails';
@@ -24,6 +27,9 @@ export const App = () => {
   const location    = useLocation();
   const pageWrapRef = useRef(null);
 
+  /* Fire the black launch veil once on first mount */
+  useEffect(() => { initPageOverlay(); }, []);
+
   // clean page transition — fade + lift on every route change
   useGSAP(() => {
     if (!pageWrapRef.current) return;
@@ -35,7 +41,10 @@ export const App = () => {
   }, { dependencies: [location.pathname] });
 
   return (
+    <ThemeProvider>
     <div className="app-container">
+      {/* Black veil that fades away on load — see cinematic.js */}
+      <div className="anim-overlay" aria-hidden="true" />
       {/* Viewport corner ticks */}
       <div className="ticks" aria-hidden="true">
         <span className="tl" />
@@ -73,5 +82,6 @@ export const App = () => {
         </Routes>
       </main>
     </div>
+    </ThemeProvider>
   );
 };

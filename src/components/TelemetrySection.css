@@ -1,0 +1,132 @@
+/* ─── Telemetry Section ──────────────────────────────────── */
+.tele-section {
+  margin-top: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  transition: border-color 0.45s ease;
+}
+
+.tele-chart-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--silver);
+  padding: 12px 20px 8px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.tele-chart-drivers {
+  display: flex;
+  gap: 20px;
+  padding: 8px 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ── Row layout ────────────────────────────────────────── */
+.tele-row {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ── SVG chart ─────────────────────────────────────────── */
+.tele-chart-wrap {
+  border-right: 1px solid var(--rule);
+}
+.tele-svg {
+  display: block;
+  width: 100%;
+  height: 160px;
+  padding: 0 4px;
+}
+.tele-path { will-change: stroke-dashoffset; }
+
+.tele-xaxis {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 20px 10px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--silver);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+
+/* ── Sector bars ───────────────────────────────────────── */
+.tele-sectors { padding: 0 16px 16px; }
+.sector-group { margin-top: 14px; }
+
+.sector-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  transition: color 0.45s ease;
+}
+.sector-bars { display: flex; flex-direction: column; gap: 4px; }
+.sector-bar-row {
+  display: grid;
+  grid-template-columns: 72px 1fr 58px;
+  align-items: center;
+  gap: 8px;
+}
+.sector-driver {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  color: var(--silver);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sector-track {
+  height: 8px;
+  background: rgba(240,237,232,0.06);
+  position: relative;
+  overflow: hidden;
+}
+.sector-fill {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  transform-origin: left center;
+  will-change: transform;
+}
+.sector-time {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text);
+  text-align: right;
+  letter-spacing: .04em;
+}
+
+/* ── Gauges ────────────────────────────────────────────── */
+.tele-gauges-wrap {
+  border-top: 1px solid var(--rule);
+}
+.tele-canvas {
+  display: block;
+  width: 100%;
+  height: 160px;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 800px) {
+  .tele-row { grid-template-columns: 1fr; }
+  .tele-chart-wrap { border-right: none; border-bottom: 1px solid var(--rule); }
+  .tele-sectors { border-top: 1px solid var(--rule); }
+}

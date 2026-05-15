@@ -14,7 +14,8 @@
     "gsap": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-router-dom": "latest"
+    "react-router-dom": "latest",
+    "three": "^0.184.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

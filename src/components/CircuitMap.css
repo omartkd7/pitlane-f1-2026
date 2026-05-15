@@ -1,0 +1,124 @@
+/* ─── Circuit Map ─────────────────────────────────────────── */
+.circuit-map {
+  margin-top: 40px;
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  transition: border-color 0.45s ease;
+}
+
+.circuit-map__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--rule);
+  background: rgba(240,237,232,.02);
+}
+
+.circuit-map__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--silver);
+}
+
+.circuit-map__sectors {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+}
+
+.circuit-map__sector-key {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+/* ── SVG canvas ─────────────────────────────────────────── */
+.circuit-map__canvas {
+  position: relative;
+  background: var(--surface);
+  border-bottom: 1px solid var(--rule);
+  overflow: hidden;
+}
+
+.circuit-map__svg {
+  display: block;
+  width: 100%;
+  height: 280px;
+}
+
+/* ── Tooltip ─────────────────────────────────────────────── */
+.circuit-map__tooltip {
+  position: absolute;
+  background: var(--surface2);
+  border: 1px solid var(--rule-strong);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  padding: 6px 10px;
+  color: var(--text);
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+/* ── Sector time bars ────────────────────────────────────── */
+.circuit-map__times {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.circuit-map__time {
+  padding: 14px 20px;
+  border-right: 1px solid var(--rule);
+  transition: background .15s;
+  cursor: default;
+}
+.circuit-map__time:last-child { border-right: none; }
+.circuit-map__time.is-active  { background: rgba(240,237,232,.025); }
+
+.circuit-map__time-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.circuit-map__time-bar {
+  height: 3px;
+  background: rgba(240,237,232,0.08);
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.circuit-map__time-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  height: 100%;
+  width: 0%;
+  transition: width 1.2s ease;
+  will-change: width;
+}
+
+.circuit-map__time-val {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--silver);
+  letter-spacing: .1em;
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .circuit-map__svg     { height: 200px; }
+  .circuit-map__header  { flex-direction: column; align-items: flex-start; gap: 8px; }
+}

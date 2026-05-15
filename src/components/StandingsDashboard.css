@@ -1,0 +1,252 @@
+/* ─── StandingsDashboard ─────────────────────────────────── */
+.sdb {
+  border: 1px solid var(--rule);
+  border-left: 3px solid var(--accent);
+  transition: border-color 0.45s ease;
+  margin-bottom: 48px;
+}
+
+/* Tabs */
+.sdb-tabs {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--rule);
+  background: rgba(240,237,232,.02);
+  gap: 0;
+}
+.sdb-tab {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--silver);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 14px 22px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.sdb-tab:hover { color: var(--text); }
+.sdb-tab--active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  transition: color 0.45s ease, border-color 0.45s ease;
+}
+.sdb-loading {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--silver);
+  letter-spacing: .12em;
+  margin-left: auto;
+  padding: 0 16px;
+  animation: spin-blink 1s infinite;
+}
+@keyframes spin-blink {
+  0%,100% { opacity: 1; } 50% { opacity: 0.3; }
+}
+
+/* Panel */
+.sdb-panel { overflow: hidden; }
+
+/* List (drivers / teams) */
+.sdb-list { display: flex; flex-direction: column; }
+
+/* Header row */
+.sdb-header {
+  display: grid;
+  grid-template-columns: 44px 52px 1fr auto 60px;
+  gap: 12px;
+  padding: 8px 20px;
+  border-bottom: 1px solid var(--rule-strong);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--silver);
+  text-transform: uppercase;
+  letter-spacing: .22em;
+}
+.sdb-h-team { text-align: right; }
+
+/* Data rows */
+.sdb-row {
+  display: grid;
+  grid-template-columns: 44px 52px 1fr auto 60px;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 20px;
+  border-bottom: 1px solid var(--rule);
+  transition: background .12s;
+  position: relative;
+}
+.sdb-row:last-child  { border-bottom: none; }
+.sdb-row:hover       { background: rgba(240,237,232,.025); }
+.sdb-row--lead       { background: rgba(var(--accent-rgb, 229,0,26), 0.04); }
+
+.sdb-pos {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--silver);
+  font-variant-numeric: tabular-nums;
+}
+.sdb-row--lead .sdb-pos { color: var(--accent); transition: color 0.45s ease; }
+
+/* Driver avatar circle */
+.sdb-avatar {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 900;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+/* Team pip (constructors) */
+.sdb-pip {
+  width: 4px;
+  height: 32px;
+  display: block;
+  flex-shrink: 0;
+}
+
+.sdb-name-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.sdb-lastname {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: 17px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--text);
+  letter-spacing: -.005em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sdb-firstname {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--silver);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.sdb-team-name {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--silver);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  text-align: right;
+  white-space: nowrap;
+}
+.sdb-pts {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: 22px;
+  line-height: 1;
+  color: var(--text);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  min-width: 48px;
+}
+.sdb-row--lead .sdb-pts { color: var(--accent); transition: color 0.45s ease; }
+
+.sdb-lead-badge {
+  position: absolute;
+  right: 72px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 2px 6px;
+  transition: color 0.45s ease, border-color 0.45s ease;
+}
+
+/* ── Calendar ─────────────────────────────────────────────── */
+.sdb-calendar { display: flex; flex-direction: column; }
+.sdb-cal-row {
+  display: grid;
+  grid-template-columns: 44px 32px 1fr auto auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  transition: background .12s;
+}
+.sdb-cal-row:last-child { border-bottom: none; }
+.sdb-cal-row:hover      { background: rgba(240,237,232,.03); }
+.sdb-cal-row--past      { opacity: 0.45; }
+
+.sdb-cal-round {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--accent);
+  transition: color 0.45s ease;
+}
+.sdb-cal-flag { font-size: 20px; line-height: 1; }
+.sdb-cal-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.sdb-cal-name {
+  font-family: var(--font-heading);
+  font-size: 18px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--text);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.sdb-cal-circuit {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--silver);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+}
+.sdb-cal-date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--silver);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.sdb-cal-sprint {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  padding: 3px 7px;
+  background: var(--accent);
+  color: var(--bg);
+  transition: var(--accent-transition);
+}
+.sdb-cal-arrow {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--accent);
+  transition: color 0.45s ease;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .sdb-header, .sdb-row {
+    grid-template-columns: 36px 40px 1fr 48px;
+  }
+  .sdb-h-team, .sdb-team-name, .sdb-lead-badge { display: none; }
+  .sdb-cal-row { grid-template-columns: 36px 28px 1fr auto; }
+  .sdb-cal-sprint { display: none; }
+}
